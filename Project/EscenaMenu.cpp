@@ -11,15 +11,22 @@
 using namespace std;
 using namespace rapidxml;
 
-rapidxml::xml_document<> doc;
-std::ifstream file("EscenaGame.xml");
-std::stringstream buffer;
-buffer << file.rdbuf();
-file.close();
-std::string content(buffer.str());
-doc.parse<0>(&content[0]);
 
 int main() {
+
+	rapidxml::xml_document<> doc;
+	std::ifstream file("EscenaGame.xml");
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	file.close();
+	std::string content(buffer.str());
+	doc.parse<0>(&content[0]);
+	std::cout << "Nombre de la raiz" << doc.first_node()->name() << "\n";
+	rapidxml::xml_node<> *pRoot = doc.first_node();
+	for (rapidxml::xml_node<> *pNode = pRoot->first_node("book"); pNode; pNode = pNode->next_sibling())
+	{
+		rapidxml::xml_attribute<> *pAttr = pNode->first_attribute();		cout << pAttr->name() << '-' << pAttr->value() << '\n';
+	}
 
 	int dif;
 	cout << "Please select your game dificulty:\n\n";
