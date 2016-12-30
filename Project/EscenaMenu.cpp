@@ -1,7 +1,23 @@
+#include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include "rapidxml.hpp"
+#include "rapidxml_iterators.hpp"
+#include "rapidxml_utils.hpp"
+#include "rapidxml_print.hpp"
 
 using namespace std;
+using namespace rapidxml;
+
+rapidxml::xml_document<> doc;
+std::ifstream file("EscenaGame.xml");
+std::stringstream buffer;
+buffer << file.rdbuf();
+file.close();
+std::string content(buffer.str());
+doc.parse<0>(&content[0]);
 
 int main() {
 
