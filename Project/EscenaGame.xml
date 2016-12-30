@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<dificulty>
+<gameDificulty>
   
   <dificulty category="easy">
     <casillas>5r*5c</casillas>
@@ -17,4 +17,4 @@
     <tiempo>t</tiempo>
   </dificulty>
   
-</dificulty>
+</gameDificulty>
