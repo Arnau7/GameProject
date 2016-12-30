@@ -11,6 +11,7 @@ int main() {
 	cout << "	Press < 2 > for NORMAL mode\n\n";
 	cout << "	Press < 3 > for HARD mode\n\n";
 	cin >> dif;
+	cout << "\n";
 	
 	switch (dif) {
 	case 1:
