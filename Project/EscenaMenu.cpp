@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include "rapidxml.hpp"
@@ -13,7 +14,6 @@ using namespace rapidxml;
 
 
 int main() {
-
 	rapidxml::xml_document<> doc;
 	std::ifstream file("EscenaGame.xml");
 	std::stringstream buffer;
@@ -28,14 +28,19 @@ int main() {
 		rapidxml::xml_attribute<> *pAttr = pNode->first_attribute();		cout << pAttr->name() << '-' << pAttr->value() << '\n';
 	}
 
+	//Inicializamos variable que introducirá el usuario
 	int dif;
+	//Imprimimos en consola texto
 	cout << "Please select your game dificulty:\n\n";
 	cout << "	Press < 1 > for EASY mode\n\n";
 	cout << "	Press < 2 > for NORMAL mode\n\n";
 	cout << "	Press < 3 > for HARD mode\n\n";
+
+	//Esperamos a que el usuario pulse una tecla
 	cin >> dif;
 	cout << "\n";
-	
+
+	//Dependiendo de la tecla puslada se seleccionará un modo o dará error
 	switch (dif) {
 	case 1:
 		cout << "EASY mode selected\n";
