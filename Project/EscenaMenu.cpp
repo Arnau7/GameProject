@@ -24,8 +24,7 @@ int main() {
 	std::cout << "Nombre de la raiz\n" << doc.first_node()->name() << "\n";
 	rapidxml::xml_node<> *pRoot = doc.first_node();
 	for (rapidxml::xml_node<> *pNode = pRoot->first_node("dificulty"); pNode; pNode = pNode->next_sibling())
-	{
-		cout << pNode->name() << ':' << '\n';		for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())		{			cout << pNodeI->name() << ':' << pNodeI->value() << '\n';		}
+	{				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())		{				cout << pNodeI->name() << ':' << pNodeI->value() << '\n';		}
 	}
 
 	//Inicializamos variable que introducirá el usuario
