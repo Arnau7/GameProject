@@ -21,9 +21,10 @@ int main() {
 	file.close();
 	std::string content(buffer.str());
 	doc.parse<0>(&content[0]);
-	std::cout << "Nombre de la raiz" << doc.first_node()->name() << "\n";
+	std::cout << "Nombre de la raiz\n" << doc.first_node()->name() << "\n";
 	rapidxml::xml_node<> *pRoot = doc.first_node();
-	for (rapidxml::xml_node<> *pNode = pRoot->first_node("book"); pNode; pNode = pNode->next_sibling())
+
+	for (rapidxml::xml_node<> *pNode = pRoot->first_node("Dificulty"); pNode; pNode = pNode->next_sibling())
 	{
 		rapidxml::xml_attribute<> *pAttr = pNode->first_attribute();		cout << pAttr->name() << '-' << pAttr->value() << '\n';
 	}
@@ -44,6 +45,12 @@ int main() {
 	switch (dif) {
 	case 1:
 		cout << "EASY mode selected\n";
+		for (rapidxml::xml_node<> *pNode = pRoot->first_node("dificulty"); pNode; pNode = pNode->next_sibling())
+	{
+		rapidxml::xml_attribute<> *pAttr = pNode->first_attribute();			cout << pAttr->name() << '-' << pAttr->value() << '\n';
+		pNode2 = pNode2
+
+	}
 		break;
 	case 2:
 		cout << "NORMAL mode selected\n";
