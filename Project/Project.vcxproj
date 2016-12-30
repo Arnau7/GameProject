@@ -112,6 +112,9 @@
   <ItemGroup>
     <ClCompile Include="EscenaMenu.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="EscenaGame.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
