@@ -181,24 +181,28 @@ void Input()
 		switch (_getch())
 		{
 		case 'w':
+			if(!prevUp)
 			dir = UP;
 			prevUp = true;
 			prevLeft = false;
 			prevRight = false;
 			break;
 		case 'a':
+			if(!prevLeft)
 			dir = LEFT;
 			prevUp = false;
 			prevLeft = true;
 			prevDown = false;
 			break;
 		case 'd':
+			if(!prevRight)
 			dir = RIGHT;
 			prevUp = false;
 			prevRight = true;
 			prevDown = false;
 			break;
 		case 's':
+			if(!prevDown)
 			dir = DOWN;
 			prevLeft = false;
 			prevRight = false;
@@ -242,25 +246,25 @@ void Logic()
 	switch (dir)
 	{
 	case LEFT:
-		if(prevRight == false)
+		if(!prevRight)
 			x--;
 		else if (prevRight)
 			x++;
 		break;
 	case RIGHT:
-		if (prevLeft == false)
+		if (!prevLeft)
 			x++;
 		else if (prevLeft)
 			x--;
 		break;
 	case UP:
-		if (prevDown == false)
+		if (!prevDown)
 			y--;
 		else if (prevDown)
 			y++;
 		break;
 	case DOWN:
-		if (prevUp == false)
+		if (!prevUp)
 			y++;
 		else if (prevUp)
 			y--;
