@@ -5,6 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include <conio.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include "rapidxml.hpp"
 #include "rapidxml_iterators.hpp"
 #include "rapidxml_utils.hpp"
@@ -21,12 +23,21 @@ int height = 10;
 int x, y, fruitX, fruitY, score;
 int tailX[100], tailY[100];
 int nTail;
-enum eDirection {STOP = 0, LEFT, RIGHT, UP, DOWN};
+int lives = 3;
+enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 
 //Menu Scene
 void Menu()
 {
+	rapidxml::xml_document<> doc;
+	std::ifstream file("EscenaGame.xml");
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	file.close();
+	std::string content(buffer.str());
+	doc.parse<0>(&content[0]);
+	rapidxml::xml_node<> *pRoot = doc.first_node();
 	//Welcome message
 	cout << "WELCOME TO SNAKE" << endl;
 	cout << endl << "Do you want to play?" << endl;
@@ -55,16 +66,38 @@ void Menu()
 		switch (dif) {
 		case 1:
 			cout << "EASY mode selected\n";
+			if (rapidxml::xml_node<> *pNode = pRoot->first_node("easy"))
+			{
+
+				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+				{
+					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+				}
+			}
 			easy = true;
 			gameOver = false;
 			break;
 		case 2:
 			cout << "NORMAL mode selected\n";
+			if (rapidxml::xml_node<> *pNode = pRoot->first_node("normal"))
+			{
+				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+				{
+					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+				}
+			}
 			medium = true;
 			gameOver = false;
 			break;
 		case 3:
 			cout << "HARD mode selected\n";
+			if (rapidxml::xml_node<> *pNode = pRoot->first_node("hard"))
+			{
+				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+				{
+					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+				}
+			}
 			hard = true;
 			gameOver = false;
 			break;
@@ -114,6 +147,16 @@ void Setup()
 	//Score counter
 	score = 0;
 
+}
+//This function will take care of parameters changes upon deaths
+void ResetDeath()
+{
+	nTail = 0;
+	dir = STOP;
+	prevUp = prevLeft = prevRight = prevDown = false; //This will allow the player to choose any direction again, even if it is the opposite of the last direction
+	x = width / 2;
+	y = height / 2;
+	lives--;
 }
 //Game Loop
 void Draw()
@@ -167,7 +210,7 @@ void Draw()
 		cout << "#";
 	cout << endl;
 	//Score print
-	cout << "Score: " << score << endl;
+	cout << "Score: " << score << "	Lives: " << lives << endl;
 }
 //In this function we receive the keys the player presses using <conio.h> library. 
 //We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
@@ -181,29 +224,29 @@ void Input()
 		switch (_getch())
 		{
 		case 'w':
-			if(!prevUp)
-			dir = UP;
+			if (!prevUp)
+				dir = UP;
 			prevUp = true;
 			prevLeft = false;
 			prevRight = false;
 			break;
 		case 'a':
-			if(!prevLeft)
-			dir = LEFT;
+			if (!prevLeft)
+				dir = LEFT;
 			prevUp = false;
 			prevLeft = true;
 			prevDown = false;
 			break;
 		case 'd':
-			if(!prevRight)
-			dir = RIGHT;
+			if (!prevRight)
+				dir = RIGHT;
 			prevUp = false;
 			prevRight = true;
 			prevDown = false;
 			break;
 		case 's':
-			if(!prevDown)
-			dir = DOWN;
+			if (!prevDown)
+				dir = DOWN;
 			prevLeft = false;
 			prevRight = false;
 			prevDown = true;
@@ -227,7 +270,7 @@ void Logic()
 	tailX[0] = x;
 	tailY[0] = y;
 	for (int i = 1; i < nTail; i++)
-	{ 
+	{
 		prev2X = tailX[i];
 		prev2Y = tailY[i];
 		tailX[i] = prevX;
@@ -246,7 +289,7 @@ void Logic()
 	switch (dir)
 	{
 	case LEFT:
-		if(!prevRight)
+		if (!prevRight)
 			x--;
 		else if (prevRight)
 			x++;
@@ -273,16 +316,26 @@ void Logic()
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > width-1 || x < 0 || y > height || y < 0)
+	if (x > width - 1 || x < 0 || y > height || y < 0)
 	{
-		gameOver = true;
+		if(lives <= 0)
+			gameOver = true;
+		else
+		{
+			ResetDeath();
+		}
 	}
 	//Game ends if you crash with your tail or body
 	for (int i = 0; i < nTail; i++)
 	{
 		if (tailX[i] == x && tailY[i] == y)
 		{
-			gameOver = true;
+			if (lives <= 0)
+				gameOver = true;
+			else
+			{
+				ResetDeath();
+			}
 		}
 	}
 	//When the head of the snake touches a fruit, it respawns to a random location of the arena, the player gains points and increases it's tail size.
@@ -294,11 +347,66 @@ void Logic()
 		nTail++;
 	}
 }
+void Guillem() {
+	try {
+		SDL_Event e;
+		//INIT
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) throw SDL_GetError();
+		const Uint8 imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+		if (!(IMG_Init(imgFlags)&imgFlags)) throw IMG_GetError();
+		//WINDOW
+		const int WIDTH = 900, HEIGHT = 600;
+		SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+		if (window == nullptr) throw SDL_GetError();
+
+		//RENDERER
+		SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+		//SPRITES
+		SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
+		SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
+		SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
+		SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
+		SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
+		SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
+		if (tileTexture == nullptr) throw SDL_GetError();
+		SDL_Rect tileRect = { 0, 0, 50,50 };
+		SDL_Rect tileRect2 = { 50, 0, 50, 50 };
+		
+		//SDL_Rect playerRect = { (WIDTH >> 1) - 100, (HEIGHT >> 1) - 100, 200, 200 };
+
+		//GAME LOOP
+		for (bool isRunning = true; isRunning;) {
+			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
+			//DRAW
+			SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect);
+			SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect2);
+			SDL_RenderPresent(renderer);
+		}
+		
+		
+		//DESTROY
+		SDL_DestroyTexture(tileTexture);
+		SDL_DestroyTexture(tailTexture);
+		SDL_DestroyTexture(headTexture);
+		SDL_DestroyTexture(bodyTexture);
+		SDL_DestroyTexture(appleTexture);
+		SDL_DestroyTexture(wallTexture);
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+	}
+	catch (const char *msg) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", msg);
+	}
+	IMG_Quit();
+	SDL_Quit();
+	
+}
 //We call here all functions, the order is very important!
-int main()
+int main(int, char*[])
 {
 	Menu();
-	Setup();	
+	Setup();
 	//You can play the game as long as the game isn't over
 	while (!gameOver) {
 		Draw();
@@ -312,6 +420,11 @@ int main()
 		else if (hard)
 			Sleep(40);
 	}
+	IMG_Quit();
+	SDL_Quit();
+	
+	Guillem();
+	return 0;
 }
 /*
 int main() {
@@ -321,11 +434,18 @@ int main() {
 	buffer << file.rdbuf();
 	file.close();
 	std::string content(buffer.str());
-	doc.parse<0>(&content[0]);
+	doc.parse<0>(&content[0]);
+
 	std::cout << "Nombre de la raiz\n" << doc.first_node()->name() << "\n";
-	rapidxml::xml_node<> *pRoot = doc.first_node();
+	rapidxml::xml_node<> *pRoot = doc.first_node();
+
 	for (rapidxml::xml_node<> *pNode = pRoot->first_node("dificulty"); pNode; pNode = pNode->next_sibling())
-	{				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())		{				cout << pNodeI->name() << ':' << pNodeI->value() << '\n';		}
+	{
+		
+		for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+		{
+				cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+		}
 	}
 
 	//Inicializamos variable que introducirá el usuario
