@@ -15,35 +15,63 @@
 using namespace std;
 using namespace rapidxml;
 
+int mouseX, mouseY;
+SDL_Rect rect;
+HWND hwnd;
+bool menu = true;
+bool dificulties, play = false;
 bool gameOver;
 bool easy, medium, hard = false;
 bool prevUp, prevLeft, prevRight, prevDown = false;
-int width = 15, height = 10;
+int arenaX = 150, arenaY = 100;
 int WIDTH = 900, HEIGHT = 600;
 int x, y, fruitX, fruitY, score;
 int tailX[100], tailY[100];
 int nTail;
 int lives = 3;
+POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
-SDL_Texture *tileTexture = nullptr;
-SDL_Texture *tailTexture = nullptr;
-SDL_Texture *headTexture = nullptr;
-SDL_Texture *bodyTexture = nullptr;
-SDL_Texture *appleTexture = nullptr;
-SDL_Texture *wallTexture = nullptr;
+
+SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+SDL_Texture *playTexture = IMG_LoadTexture(renderer, "../res/gfx/play.png");
+SDL_Texture *exitTexture = IMG_LoadTexture(renderer, "../res/gfx/exit.png");
+SDL_Texture *snakeTexture = IMG_LoadTexture(renderer, "../res/gfx/snake.png");
+SDL_Texture *easyTexture = IMG_LoadTexture(renderer, "../res/gfx/easy.png");
+SDL_Texture *mediumTexture = IMG_LoadTexture(renderer, "../res/gfx/medium.png");
+SDL_Texture *hardTexture = IMG_LoadTexture(renderer, "../res/gfx/hard.png");
+
+SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
+SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
+SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
+SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
+SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
+SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
+
+SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2-50,100,100 };
+SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2-50 +120,100,100 };
+
+SDL_Rect snakeRect = { WIDTH / 2 - 200, 20,400,100 };
+SDL_Rect easyRect = { WIDTH / 2 - 200, HEIGHT/2-300 / 2,100,100 };
+SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
+SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
+
 SDL_Rect tileRect = { 0, 0, 50, 50 };
 SDL_Rect wallRect = { 0, 0, 50, 50 };
 SDL_Rect headRect = { 0, 0, 50, 50 };
 SDL_Rect bodyRect = { 0, 0, 50, 50 };
 SDL_Rect tailRect = { 0, 0, 50, 50 };
 SDL_Rect appleRect = { 0, 0, 50, 50 };
-SDL_Renderer *renderer = nullptr;
-SDL_Window *window = nullptr;
+
 
 //Menu Scene
 void Menu()
 {
+	if (playTexture == NULL) cout << SDL_GetError();
+	if (exitTexture == NULL) cout << SDL_GetError();
+	
 	rapidxml::xml_document<> doc;
 	std::ifstream file("EscenaGame.xml");
 	std::stringstream buffer;
@@ -52,6 +80,90 @@ void Menu()
 	std::string content(buffer.str());
 	doc.parse<0>(&content[0]);
 	rapidxml::xml_node<> *pRoot = doc.first_node();
+
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+
+		SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
+		SDL_RenderCopy(renderer, exitTexture, nullptr, &exitRect);
+		SDL_RenderCopy(renderer, snakeTexture, nullptr, &snakeRect);
+
+		switch (event.type) {
+		case SDL_MOUSEBUTTONDOWN:
+			p.x = event.button.x;
+			p.y = event.button.y;
+			if (menu)
+			{
+				if (p.x <= playRect.x + playRect.w && p.x >= playRect.x && p.y <= playRect.y + playRect.h && p.y >= playRect.y && event.button.button == SDL_BUTTON_LEFT)
+				{
+					dificulties = true;
+					cout << "Play" << endl;
+					menu = false;
+				}
+				if (p.x <= exitRect.x + exitRect.w && p.x >= exitRect.x && p.y <= exitRect.y + exitRect.h && p.y >= exitRect.y)
+				{
+					cout << "Exit" << endl;
+					gameOver = true;
+				}
+			}
+			if (dificulties)
+			{
+				SDL_RenderCopy(renderer, easyTexture, nullptr, &easyRect);
+				SDL_RenderCopy(renderer, mediumTexture, nullptr, &mediumRect);
+				SDL_RenderCopy(renderer, hardTexture, nullptr, &hardRect);
+
+				if (p.x <= easyRect.x + easyRect.w && p.x >= easyRect.x && p.y <= easyRect.y + easyRect.h && p.y >= easyRect.y)
+				{
+					cout << "EASY mode selected\n";
+					if (rapidxml::xml_node<> *pNode = pRoot->first_node("easy"))
+					{
+
+						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+						{
+							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+						}
+					}
+					gameOver = false;
+					easy = true;
+					dificulties = false;
+				}
+				if (p.x <= mediumRect.x + mediumRect.w && p.x >= mediumRect.x && p.y <= mediumRect.y + mediumRect.h && p.y >= mediumRect.y)
+				{
+					cout << "MEDIUM mode selected\n";
+					if (rapidxml::xml_node<> *pNode = pRoot->first_node("medium"))
+					{
+
+						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+						{
+							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+						}
+					}
+					gameOver = false;
+					medium = true;
+					dificulties = false;
+				}
+				if (p.x <= hardRect.x + hardRect.w && p.x >= hardRect.x && p.y <= hardRect.y + hardRect.h && p.y >= hardRect.y)
+				{
+					cout << "HARD mode selected\n";
+					if (rapidxml::xml_node<> *pNode = pRoot->first_node("hard"))
+					{
+
+						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
+						{
+							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+						}
+					}
+					gameOver = false;
+					hard = true;
+					dificulties = false;
+				}
+			}
+		}
+		
+	}
+	SDL_RenderPresent(renderer);
+
+	/*
 	//Welcome message
 	cout << "WELCOME TO SNAKE" << endl;
 	cout << endl << "Do you want to play?" << endl;
@@ -131,34 +243,25 @@ void Menu()
 	{
 		cout << "\nError: Invalid key\n\n";
 		gameOver = true;
-	}
+	}*/
 }
+
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
-	//We load the sprites
-	tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
-	tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
-	headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
-	bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
-	appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
-	wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 
 	tileRect = { 0, 0, 50, 50 };
 
-	//We initate the window
-	window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-	//We initiate the renderer
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
 	if (easy)
 	{
-		width *= 5;
-		height *= 5;
+		arenaX *= 5;
+		arenaY *= 5;
 	}
 	else if (medium)
 	{
-		width *= 2;
-		height *= 2;
+		arenaX *= 2;
+		arenaY *= 2;
 	}
 	else if (hard)
 	{
@@ -167,25 +270,30 @@ void Setup()
 	//Initial direction of the snake is 0 = Stop for any difficulty
 	dir = STOP;
 	//Initial position of the snake in any map
-	x = width / 2;
-	y = height / 2;
+	x = arenaX / 2;
+	y = arenaY / 2;
 	//Fruit initial spawn
-	fruitX = rand() % WIDTH;
-	fruitY = rand() % HEIGHT;
+	fruitX = rand() % arenaX;
+	fruitY = rand() % arenaY;
 	//Score counter
 	score = 0;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 
+	rect.x = WIDTH / 2;
+	rect.y = HEIGHT / 2;
+	rect.w = arenaX;
+	rect.h = arenaY;
 }
+
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
 {
 	nTail = 0;
 	dir = STOP;
 	prevUp = prevLeft = prevRight = prevDown = false; //This will allow the player to choose any direction again, even if it is the opposite of the last direction
-	x = width / 2;
-	y = height / 2;
+	x = arenaX / 2;
+	y = arenaY / 2;
 	lives--;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
@@ -195,20 +303,20 @@ void Draw()
 {
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
-	for (int i = 0; i < HEIGHT; i++)
+	for (int i = 0; i < arenaX; i++)
 	{
-		for (int j = 0; j < WIDTH; j++)
+		for (int j = 0; j < arenaY; j++)
 		{
-			tileRect.x = WIDTH;
-			tileRect.y = HEIGHT;
+			tileRect.x = arenaX;
+			tileRect.y = arenaY;
 			//TopWall
 			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
-			//Right wall
+			//Left wall
 			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 			//Right wall
-			if (j == WIDTH - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 			//Bottom Wall
-			if (i == HEIGHT-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 			//Snake positions
 			if (i == y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
 				
@@ -231,8 +339,6 @@ void Draw()
 				if (!print){ SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					
 			}
-			
-				
 		}
 	}
 	SDL_RenderPresent(renderer);
@@ -341,7 +447,7 @@ void Logic()
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > WIDTH - 50 || x < 0 || y > height || y < 0)
+	if (x > arenaX - 50 || x < 0 || y > arenaY || y < 0)
 	{
 		if (lives <= 0)
 			gameOver = true;
@@ -366,14 +472,15 @@ void Logic()
 	if (x == fruitX && y == fruitY)
 	{
 		score += 10;
-		fruitX = rand() % WIDTH;
-		fruitY = rand() % HEIGHT;
+		fruitX = rand() % arenaX;
+		fruitY = rand() % arenaY;
 		nTail++;
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
 	}
 }
-void Guillem() {
+/*
+void Sprites() {
 	try {
 		SDL_Event e;
 		//INIT
@@ -409,8 +516,7 @@ void Guillem() {
 			SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect2);
 			SDL_RenderPresent(renderer);
 		}
-		
-		
+			
 		//DESTROY
 		SDL_DestroyTexture(tileTexture);
 		SDL_DestroyTexture(tailTexture);
@@ -427,34 +533,41 @@ void Guillem() {
 	IMG_Quit();
 	SDL_Quit();
 	
-}
+}*/
+
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	Menu();
+	while (((menu || dificulties) && !gameOver))
+	{
+		Menu();
+	}
 	Setup();
 	//You can play the game as long as the game isn't over
-	while (!gameOver) {
+	while (!menu && !dificulties && !gameOver) { //(play && !gameOver)
 		Draw();
 		Input();
 		Logic();
 		//We use Sleep() function to control the speed of the game
-		if (easy)
+	/*	if (easy)
 			Sleep(120);
 		else if (medium)
 			Sleep(80);
 		else if (hard)
-			Sleep(40);
+			Sleep(40);*/
 	}
+	/*
 	SDL_DestroyTexture(tileTexture);
 	SDL_DestroyTexture(tailTexture);
 	SDL_DestroyTexture(headTexture);
 	SDL_DestroyTexture(bodyTexture);
 	SDL_DestroyTexture(appleTexture);
 	SDL_DestroyTexture(wallTexture);
+	
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();
-	SDL_Quit();
+	SDL_Quit();*/
+	
 	return 0;
 }

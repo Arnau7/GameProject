@@ -158,9 +158,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EscenaMenu.cpp" />
+    <ClCompile Include="MenuScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="EscenaGame.xml" />
+    <Xml Include="EscenaGame.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rapidxml.hpp" />
