@@ -267,11 +267,11 @@ void Setup()
 	{
 
 	}
-	//Initial direction of the snake is 0 = Stop for any difficulty
+	//Initial direction of the snake is 0 = Stop for any diafficulty
 	dir = STOP;
 	//Initial position of the snake in any map
-	x = arenaX / 2;
-	y = arenaY / 2;
+	x = 50;
+	y = 50;
 	//Fruit initial spawn
 	fruitX = (1 + rand() % (arenaX/10)) * 10;
 	fruitY = (1 + rand() % (arenaY/10)) * 10;
@@ -292,8 +292,8 @@ void ResetDeath()
 	nTail = 0;
 	dir = STOP;
 	prevUp = prevLeft = prevRight = prevDown = false; //This will allow the player to choose any direction again, even if it is the opposite of the last direction
-	x = arenaX / 2;
-	y = arenaY / 2;
+	x = 50;
+	y = 50;
 	lives--;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
@@ -304,9 +304,6 @@ void Draw()
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
 	
-		SDL_Event e;
-		for (bool isRunning = true; isRunning;) {
-			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
 			//DRAW
 			for (int i = 0; i < arenaY; i += 10) {
 				for (int j = 0; j < arenaX; j += 10) {
@@ -325,7 +322,7 @@ void Draw()
 				}
 			}
 			SDL_RenderPresent(renderer);
-		}
+			cout << x << " , " << y << endl;
 			/*
 			tileRect.x = j;
 			tileRect.y = i;
@@ -438,33 +435,33 @@ void Logic()
 	{
 	case LEFT:
 		if (!prevRight)
-			x--;
+			x -=10;
 		else if (prevRight)
-			x++;
+			x +=10;
 		break;
 	case RIGHT:
 		if (!prevLeft)
-			x++;
+			x += 10;
 		else if (prevLeft)
-			x--;
+			x -= 10;
 		break;
 	case UP:
 		if (!prevDown)
-			y--;
+			y -= 10;
 		else if (prevDown)
-			y++;
+			y += 10;
 		break;
 	case DOWN:
 		if (!prevUp)
-			y++;
+			y +=10;
 		else if (prevUp)
-			y--;
+			y -=10;
 		break;
 	default:
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > arenaX - 50 || x < 0 || y > arenaY || y < 0)
+	if (x > arenaX - 10 || x < 0 || y > arenaY -10 || y < 0)
 	{
 		if (lives <= 0)
 			gameOver = true;
@@ -561,7 +558,7 @@ int main(int, char*[])
 	}
 	Setup();
 	//You can play the game as long as the game isn't over
-	while (!menu && !dificulties && !gameOver) { //(play && !gameOver)
+	while (!gameOver) { //(play && !gameOver)
 		Draw();
 		Input();
 		Logic();
