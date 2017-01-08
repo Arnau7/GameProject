@@ -273,8 +273,8 @@ void Setup()
 	x = arenaX / 2;
 	y = arenaY / 2;
 	//Fruit initial spawn
-	fruitX = rand() % arenaX;
-	fruitY = rand() % arenaY;
+	fruitX = (1 + rand() % (arenaX/10)) * 10;
+	fruitY = (1 + rand() % (arenaY/10)) * 10;
 	//Score counter
 	score = 0;
 	//Score & lives print
@@ -320,6 +320,8 @@ void Draw()
 					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					//Snake
 					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
+					//apple
+					if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
 				}
 			}
 			SDL_RenderPresent(renderer);
@@ -487,8 +489,8 @@ void Logic()
 	if (x == fruitX && y == fruitY)
 	{
 		score += 10;
-		fruitX = rand() % arenaX;
-		fruitY = rand() % arenaY;
+		fruitX = (1 + rand() % (arenaX / 10)) * 10;
+		fruitY = (1 + rand() % (arenaY / 10)) * 10;
 		nTail++;
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
