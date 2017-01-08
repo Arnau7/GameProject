@@ -304,12 +304,11 @@ void Draw()
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
 	
-		SDL_Event e;
-		for (bool isRunning = true; isRunning;) {
-			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
+		
 			//DRAW
 			for (int i = 0; i < arenaY; i += 10) {
 				for (int j = 0; j < arenaX; j += 10) {
+					
 					tileRect.x = j;
 					tileRect.y = i;
 					//Tiles
@@ -325,7 +324,7 @@ void Draw()
 				}
 			}
 			SDL_RenderPresent(renderer);
-		}
+		
 			/*
 			tileRect.x = j;
 			tileRect.y = i;
@@ -450,21 +449,21 @@ void Logic()
 		break;
 	case UP:
 		if (!prevDown)
-			y--;
+			y-=10;
 		else if (prevDown)
 			y++;
 		break;
 	case DOWN:
 		if (!prevUp)
-			y++;
+			y+=10;
 		else if (prevUp)
-			y--;
+			y-=10;
 		break;
 	default:
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > arenaX - 50 || x < 0 || y > arenaY || y < 0)
+	if (x > arenaX - 10 || x < 0 || y > arenaY-10 || y < 0)
 	{
 		if (lives <= 0)
 			gameOver = true;
