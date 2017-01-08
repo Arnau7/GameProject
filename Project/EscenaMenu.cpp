@@ -65,7 +65,6 @@ SDL_Rect bodyRect = { 0, 0, 50, 50 };
 SDL_Rect tailRect = { 0, 0, 50, 50 };
 SDL_Rect appleRect = { 0, 0, 50, 50 };
 
-
 //Menu Scene
 void Menu()
 {
@@ -317,12 +316,12 @@ void Draw()
 					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					//Snake
 					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-					//apple
-					if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
+					//apple //if(dir == UP) etc..
+					if (i == fruitY && j == fruitX) { SDL_RenderCopyEx(renderer, appleTexture, nullptr, &tileRect, 90, nullptr, SDL_FLIP_NONE); }
 				}
 			}
 			SDL_RenderPresent(renderer);
-			cout << x << " , " << y << endl;
+			//cout << x << " , " << y << endl;
 			/*
 			tileRect.x = j;
 			tileRect.y = i;
@@ -332,7 +331,7 @@ void Draw()
 			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
 			//Left wall
 			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Right wall
+			//Right walls
 			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 			//Bottom Wall
 			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
