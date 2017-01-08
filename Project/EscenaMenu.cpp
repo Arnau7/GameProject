@@ -25,13 +25,14 @@ bool easy, medium, hard = false;
 bool prevUp, prevLeft, prevRight, prevDown = false;
 int arenaX = 150, arenaY = 100;
 int WIDTH = 900, HEIGHT = 600;
-int x, y, fruitX, fruitY, score;
-int tailX[100], tailY[100];
+int x, y, DIR,fruitX, fruitY, score;
+int tailX[100], tailY[100], direction[100];
 int nTail;
 int lives = 3;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
+
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -64,7 +65,6 @@ SDL_Rect headRect = { 0, 0, 50, 50 };
 SDL_Rect bodyRect = { 0, 0, 50, 50 };
 SDL_Rect tailRect = { 0, 0, 50, 50 };
 SDL_Rect appleRect = { 0, 0, 50, 50 };
-
 
 //Menu Scene
 void Menu()
@@ -267,11 +267,11 @@ void Setup()
 	{
 
 	}
-	//Initial direction of the snake is 0 = Stop for any difficulty
+	//Initial direction of the snake is 0 = Stop for any diafficulty
 	dir = STOP;
 	//Initial position of the snake in any map
-	x = arenaX / 2;
-	y = arenaY / 2;
+	x = 50;
+	y = 50;
 	//Fruit initial spawn
 	fruitX = (1 + rand() % (arenaX/10)) * 10;
 	fruitY = (1 + rand() % (arenaY/10)) * 10;
@@ -292,8 +292,8 @@ void ResetDeath()
 	nTail = 0;
 	dir = STOP;
 	prevUp = prevLeft = prevRight = prevDown = false; //This will allow the player to choose any direction again, even if it is the opposite of the last direction
-	x = arenaX / 2;
-	y = arenaY / 2;
+	x = 50;
+	y = 50;
 	lives--;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
@@ -304,11 +304,9 @@ void Draw()
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
 	
-		
 			//DRAW
 			for (int i = 0; i < arenaY; i += 10) {
 				for (int j = 0; j < arenaX; j += 10) {
-					
 					tileRect.x = j;
 					tileRect.y = i;
 					//Tiles
@@ -319,12 +317,12 @@ void Draw()
 					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					//Snake
 					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-					//apple
-					if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
+					//apple //if(dir == UP) etc..
+					if (i == fruitY && j == fruitX) { SDL_RenderCopyEx(renderer, appleTexture, nullptr, &tileRect, 90, nullptr, SDL_FLIP_NONE); }
 				}
 			}
 			SDL_RenderPresent(renderer);
-		
+			//cout << x << " , " << y << endl;
 			/*
 			tileRect.x = j;
 			tileRect.y = i;
@@ -334,7 +332,7 @@ void Draw()
 			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
 			//Left wall
 			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Right wall
+			//Right walls
 			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 			//Bottom Wall
 			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
@@ -413,17 +411,23 @@ void Logic()
 	//Here we take care of the body/tail of the snake
 	int prevX = tailX[0];
 	int prevY = tailY[0];
-	int prev2X, prev2Y;
+	int prevDirection = direction[0];
+	int prev2X, prev2Y, prev2Direction;
 	tailX[0] = x;
 	tailY[0] = y;
+	direction[0] = DIR;
+
 	for (int i = 1; i < nTail; i++)
 	{
 		prev2X = tailX[i];
 		prev2Y = tailY[i];
+		prev2Direction = direction[i];
 		tailX[i] = prevX;
 		tailY[i] = prevY;
+		direction[i] = prevDirection;
 		prevX = prev2X;
 		prevY = prev2Y;
+		prevDirection = prev2Direction;
 	}
 	//The direction changes depending on the information received in the Input() function
 	//If the previous key of any direction has been pressed, it's boolean would be set as "true", meaning that if you press
@@ -436,34 +440,52 @@ void Logic()
 	switch (dir)
 	{
 	case LEFT:
-		if (!prevRight)
-			x--;
-		else if (prevRight)
-			x++;
+		if (!prevRight){
+			x -= 10;
+			DIR = 270;
+		}
+			
+		else if (prevRight){ 
+			x += 10; 
+			DIR = 90;
+		}
 		break;
 	case RIGHT:
-		if (!prevLeft)
-			x++;
-		else if (prevLeft)
-			x--;
+		if (!prevLeft){
+			x += 10;
+			DIR = 90;
+		}
+			
+		else if (prevLeft){
+			x -= 10;
+			DIR = 270;
+		}
 		break;
 	case UP:
-		if (!prevDown)
-			y-=10;
-		else if (prevDown)
-			y++;
+		if (!prevDown){
+			y -= 10;
+			DIR = 0;
+		}
+		else if (prevDown){
+			y += 10;
+			DIR = 180;
+		}
 		break;
 	case DOWN:
-		if (!prevUp)
-			y+=10;
-		else if (prevUp)
-			y-=10;
+		if (!prevUp) {
+			y += 10;
+			DIR = 180;
+		}
+		else if (prevUp) {
+			y -= 10;
+			DIR = 0;
+		}
 		break;
 	default:
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > arenaX - 10 || x < 0 || y > arenaY-10 || y < 0)
+	if (x > arenaX - 10 || x < 0 || y > arenaY -10 || y < 0)
 	{
 		if (lives <= 0)
 			gameOver = true;
@@ -560,7 +582,7 @@ int main(int, char*[])
 	}
 	Setup();
 	//You can play the game as long as the game isn't over
-	while (!menu && !dificulties && !gameOver) { //(play && !gameOver)
+	while (!gameOver) { //(play && !gameOver)
 		Draw();
 		Input();
 		Logic();
