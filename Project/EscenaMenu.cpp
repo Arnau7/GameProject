@@ -385,9 +385,6 @@ void Input()
 		case 'x':
 			gameOver = true; //x to quit the game
 			break;
-		case 'r':
-			Menu(); //r to go back to the Menu, "reset game"
-			break;
 		}
 	}
 }
@@ -556,7 +553,12 @@ int main(int, char*[])
 		else if (hard)
 			Sleep(40);*/
 	}
-	/*
+	SDL_DestroyTexture(playTexture);
+	SDL_DestroyTexture(exitTexture);
+	SDL_DestroyTexture(easyTexture);
+	SDL_DestroyTexture(mediumTexture);
+	SDL_DestroyTexture(hardTexture);
+	SDL_DestroyTexture(snakeTexture);
 	SDL_DestroyTexture(tileTexture);
 	SDL_DestroyTexture(tailTexture);
 	SDL_DestroyTexture(headTexture);
@@ -567,7 +569,7 @@ int main(int, char*[])
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	IMG_Quit();
-	SDL_Quit();*/
+	SDL_Quit();
 	
 	return 0;
 }
