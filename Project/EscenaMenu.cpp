@@ -33,7 +33,6 @@ POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 
-
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
@@ -60,6 +59,7 @@ SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
 SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
 
 SDL_Rect tileRect = { 0, 0, 50, 50 };
+
 SDL_Rect wallRect = { 0, 0, 50, 50 };
 SDL_Rect headRect = { 0, 0, 50, 50 };
 SDL_Rect bodyRect = { 0, 0, 50, 50 };
@@ -249,9 +249,7 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
-
 	tileRect = { 0, 0, 10, 10 };
-
 
 	if (easy)
 	{
@@ -310,15 +308,33 @@ void Draw()
 					tileRect.x = j;
 					tileRect.y = i;
 					//Tiles
-					if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					//Snake
-					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-					//apple //if(dir == UP) etc..
-					if (i == fruitY && j == fruitX) { SDL_RenderCopyEx(renderer, appleTexture, nullptr, &tileRect, 90, nullptr, SDL_FLIP_NONE); }
+					if (i==y && j == x){ SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, DIR, nullptr, SDL_FLIP_NONE); }
+					//Apple
+					else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
+					else
+					{
+						//Printing the body of the snake
+						bool print = false;
+						for (int k = 0; k < nTail; k++)
+						{
+							if (tailX[k] == j && tailY[k] == i)
+							{
+								SDL_RenderCopyEx(renderer, bodyTexture, nullptr, &tileRect, DIR, nullptr, SDL_FLIP_NONE);
+								print = true;
+							}
+						}
+						//Printing blank spaces if there's no body to print
+						if (!print) {
+							SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect);
+							//Printing walls again
+							if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+							else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+							else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+							else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+							//else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
+						}
+					}
 				}
 			}
 			SDL_RenderPresent(renderer);
@@ -367,6 +383,48 @@ void Draw()
 //In the Logic() function we will see why.
 void Input()
 {
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			/* Look for a keypress */
+		case SDL_KEYDOWN:
+			/* Check the SDLKey values and move change the coords */
+			switch (event.key.keysym.sym) {
+			case SDLK_LEFT:
+				if (!prevLeft)
+					dir = LEFT;
+				prevUp = false;
+				prevLeft = true;
+				prevDown = false;
+				break;
+			case SDLK_RIGHT:
+				if (!prevRight)
+					dir = RIGHT;
+				prevUp = false;
+				prevRight = true;
+				prevDown = false;
+				break;
+			case SDLK_UP:
+				if (!prevUp)
+					dir = UP;
+				prevUp = true;
+				prevLeft = false;
+				prevRight = false;
+				break;
+			case SDLK_DOWN:
+				if (!prevDown)
+					dir = DOWN;
+				prevLeft = false;
+				prevRight = false;
+				prevDown = true;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	/*
 	if (_kbhit())
 	{
 		switch (_getch())
@@ -403,7 +461,7 @@ void Input()
 			gameOver = true; //x to quit the game
 			break;
 		}
-	}
+	}*/
 }
 //In this function is where we calculate all positions according to what the player does in the game.
 void Logic()
@@ -485,7 +543,7 @@ void Logic()
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > arenaX - 10 || x < 0 || y > arenaY -10 || y < 0)
+	if (x >= arenaX - 10 || x < 10 || y >= arenaY - 10 || y < 10)
 	{
 		if (lives <= 0)
 			gameOver = true;
@@ -497,6 +555,7 @@ void Logic()
 	//Game ends if you crash with your tail or body
 	for (int i = 0; i < nTail; i++)
 	{
+		if (tailX[i] == x && tailY[i] == y)
 		{
 			if (lives <= 0)
 				gameOver = true;
@@ -507,7 +566,7 @@ void Logic()
 		}
 	}
 	//When the head of the snake touches a fruit, it respawns to a random location of the arena, the player gains points and increases it's tail size.
-	if (x == fruitX && y == fruitY)
+	if (x == fruitX && y == fruitY)	//if(x <= fruitX + tileRect.w && x >= fruitX && y <= fruitY + tileRect.h && y >= fruitY)	
 	{
 		score += 10;
 		fruitX = (1 + rand() % (arenaX / 10)) * 10;
@@ -587,12 +646,12 @@ int main(int, char*[])
 		Input();
 		Logic();
 		//We use Sleep() function to control the speed of the game
-	/*	if (easy)
-			Sleep(120);
+		if (easy)
+			Sleep(150);
 		else if (medium)
-			Sleep(80);
+			Sleep(120);
 		else if (hard)
-			Sleep(40);*/
+			Sleep(80);
 	}
 	SDL_DestroyTexture(playTexture);
 	SDL_DestroyTexture(exitTexture);
