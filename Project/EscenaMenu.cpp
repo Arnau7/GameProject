@@ -250,7 +250,7 @@ void Menu()
 void Setup()
 {
 
-	tileRect = { 0, 0, 50, 50 };
+	tileRect = { 0, 0, 10, 10 };
 
 
 	if (easy)
@@ -303,51 +303,28 @@ void Draw()
 {
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
-	for (int i = 0; i < arenaX; i++)
-	{
-		for (int j = 0; j < arenaY; j++)
-		{
-			/*
-			for (bool isRunning = true; isRunning;) {
+	
+		SDL_Event e;
+		for (bool isRunning = true; isRunning;) {
 			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
 			//DRAW
-			for (int i = 0; i < HEIGHT; i += 10) {
-				for (int j = 0; j < WIDTH; j += 10) {
+			for (int i = 0; i < arenaY; i += 10) {
+				for (int j = 0; j < arenaX; j += 10) {
 					tileRect.x = j;
 					tileRect.y = i;
 					//Tiles
 					if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 					else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else if (j == WIDTH - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-					else if (i == HEIGHT - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
 					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					//Snake
 					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
 				}
 			}
 			SDL_RenderPresent(renderer);
-			y = (1 + rand() % 10) * 10;
-			x = (1 + rand() % 10) * 10;
-			Sleep(1000);
 		}
-		
-		
-		//DESTROY
-		SDL_DestroyTexture(tileTexture);
-		SDL_DestroyTexture(tailTexture);
-		SDL_DestroyTexture(headTexture);
-		SDL_DestroyTexture(bodyTexture);
-		SDL_DestroyTexture(appleTexture);
-		SDL_DestroyTexture(wallTexture);
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-	}
-	catch (const char *msg) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", msg);
-	}
-	IMG_Quit();
-	SDL_Quit();
-			*/
+			/*
 			tileRect.x = j;
 			tileRect.y = i;
 
@@ -381,10 +358,8 @@ void Draw()
 				//Printing blank spaces if there's no body to print
 				if (!print){ SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
 					
-			}
-		}
-	}
-	SDL_RenderPresent(renderer);
+			}*/
+	
 }
 //In this function we receive the keys the player presses using <conio.h> library. 
 //We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
