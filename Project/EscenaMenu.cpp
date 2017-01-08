@@ -273,17 +273,17 @@ void Setup()
 	x = arenaX / 2;
 	y = arenaY / 2;
 	//Fruit initial spawn
-	fruitX = (1 + rand() % (arenaX / 10)) * 10;
-	fruitY = (1 + rand() % (arenaY / 10)) * 10;
+	fruitX = rand() % arenaX;
+	fruitY = rand() % arenaY;
 	//Score counter
 	score = 0;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 
-	//rect.x = WIDTH / 2;
-	//rect.y = HEIGHT / 2;
-	//rect.w = arenaX;
-	//rect.h = arenaY;
+	rect.x = WIDTH / 2;
+	rect.y = HEIGHT / 2;
+	rect.w = arenaX;
+	rect.h = arenaY;
 }
 
 //This function will take care of parameters changes upon deaths
@@ -298,6 +298,74 @@ void ResetDeath()
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 }
+//Game Loop
+void Draw()
+{
+	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
+	//X, Y loops
+	
+		SDL_Event e;
+		for (bool isRunning = true; isRunning;) {
+			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
+			//DRAW
+			for (int i = 0; i < arenaY; i += 10) {
+				for (int j = 0; j < arenaX; j += 10) {
+					tileRect.x = j;
+					tileRect.y = i;
+					//Tiles
+					if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
+					//Snake
+					if (i==y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
+				}
+			}
+			SDL_RenderPresent(renderer);
+		}
+			/*
+			tileRect.x = j;
+			tileRect.y = i;
+
+
+			//TopWall
+			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
+			//Left wall
+			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+			//Right wall
+			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+			//Bottom Wall
+			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+			//Snake positions
+			if (i == y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
+				
+			//Fruit positions
+			else if (i == fruitY && j == fruitX){ SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
+				
+			else
+			{
+				//Printing the body of the snake
+				bool print = false;
+				for (int k = 0; k < nTail; k++)
+				{
+					if (tailX[k] == j && tailY[k] == i)
+					{
+						SDL_RenderCopy(renderer, bodyTexture, nullptr, &tileRect);
+						print = true;
+					}
+				}
+				//Printing blank spaces if there's no body to print
+				if (!print){ SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
+					
+			}*/
+	
+}
+//In this function we receive the keys the player presses using <conio.h> library. 
+//We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
+//respect the current, we use booleans.
+//We set the previous key pressed boolean to true in their case and set all the others to false apart from the opposite direction. 
+//In the Logic() function we will see why.
 void Input()
 {
 	if (_kbhit())
@@ -368,33 +436,33 @@ void Logic()
 	{
 	case LEFT:
 		if (!prevRight)
-			x -= 10;
+			x--;
 		else if (prevRight)
-			x += 10;
+			x++;
 		break;
 	case RIGHT:
 		if (!prevLeft)
-			x -= 10;
+			x++;
 		else if (prevLeft)
-			x += 10;
+			x--;
 		break;
 	case UP:
 		if (!prevDown)
-			y -= 10;
+			y--;
 		else if (prevDown)
-			y += 10;
+			y++;
 		break;
 	case DOWN:
 		if (!prevUp)
-			y += 10;
+			y++;
 		else if (prevUp)
-			y -= 10;
+			y--;
 		break;
 	default:
 		break;
 	}
 	//Game ends if you crash with any wall
-	if (x > arenaX - 10 || x < 0 || y > arenaY - 10 || y < 0)
+	if (x > arenaX - 50 || x < 0 || y > arenaY || y < 0)
 	{
 		if (lives <= 0)
 			gameOver = true;
@@ -428,160 +496,59 @@ void Logic()
 }
 /*
 void Sprites() {
-try {
-SDL_Event e;
-//INIT
-if (SDL_Init(SDL_INIT_EVERYTHING) != 0) throw SDL_GetError();
-const Uint8 imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-if (!(IMG_Init(imgFlags)&imgFlags)) throw IMG_GetError();
-//WINDOW
-int WIDTH = 900, HEIGHT = 600;
-SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-if (window == nullptr) throw SDL_GetError();
+	try {
+		SDL_Event e;
+		//INIT
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) throw SDL_GetError();
+		const Uint8 imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+		if (!(IMG_Init(imgFlags)&imgFlags)) throw IMG_GetError();
+		//WINDOW
+		 int WIDTH = 900, HEIGHT = 600;
+		SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+		if (window == nullptr) throw SDL_GetError();
 
-//RENDERER
-SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+		//RENDERER
+		SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-//SPRITES
-SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
-SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
-SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
-SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
-SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
-SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
-//if (tileTexture == nullptr) throw SDL_GetError();
-SDL_Rect tileRect = { 0, 0, 50,50 };
-SDL_Rect tileRect2 = { 50, 0, 50, 50 };
-
-//SDL_Rect playerRect = { (WIDTH >> 1) - 100, (HEIGHT >> 1) - 100, 200, 200 };
-
-//GAME LOOP
-for (bool isRunning = true; isRunning;) {
-if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
-//DRAW
-SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect);
-SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect2);
-SDL_RenderPresent(renderer);
-}
-
-//DESTROY
-SDL_DestroyTexture(tileTexture);
-SDL_DestroyTexture(tailTexture);
-SDL_DestroyTexture(headTexture);
-SDL_DestroyTexture(bodyTexture);
-SDL_DestroyTexture(appleTexture);
-SDL_DestroyTexture(wallTexture);
-SDL_DestroyRenderer(renderer);
-SDL_DestroyWindow(window);
-}
-catch (const char *msg) {
-SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", msg);
-}
-IMG_Quit();
-SDL_Quit();
-
-}*/
-//Game Loop
-void Draw()
-{
-	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
-	//X, Y loops
-	
-	SDL_Event e;
-	for (bool gameOver = false; gameOver;) {
-		if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) gameOver = true;
+		//SPRITES
+		SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
+		SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
+		SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
+		SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
+		SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
+		SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
+		//if (tileTexture == nullptr) throw SDL_GetError();
+		SDL_Rect tileRect = { 0, 0, 50,50 };
+		SDL_Rect tileRect2 = { 50, 0, 50, 50 };
 		
-		//DRAW		
-		for (int i = 0; i < arenaY; i += 10) 
-		{
-			for (int j = 0; j < arenaX; j += 10) 
-			{
-				tileRect.x = j;
-				tileRect.y = i;
-				//Superior wall
-				if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-				//Right wall corner
-				else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-				//Snake
-				else if (j == y && i == x) { SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-				//Fruit positions
-				else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
-				//Bottom wall
-				else if(i == arenaY-10) {
-					SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);
-				}
-				else
-				{
-					//Printing the body of the snake
-					bool print = false;
-					for (int k = 0; k < nTail; k +=10)
-					{
-						if (tailX[k] == j && tailY[k] == i)
-						{
-							SDL_RenderCopy(renderer, bodyTexture, nullptr, &tileRect);
-							print = true;
-						}
-					}
-					//Printing blank spaces if there's no body to print
-					if (!print) { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
-				}
-				//Righ Wall
-			if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			}
+		//SDL_Rect playerRect = { (WIDTH >> 1) - 100, (HEIGHT >> 1) - 100, 200, 200 };
+
+		//GAME LOOP
+		for (bool isRunning = true; isRunning;) {
+			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
+			//DRAW
+			SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect);
+			SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect2);
+			SDL_RenderPresent(renderer);
 		}
-		SDL_RenderPresent(renderer);
-				//y = (1 + rand() % 10) * 10;
-				//x = (1 + rand() % 10) * 10;
-			//	Sleep(1000);
+			
+		//DESTROY
+		SDL_DestroyTexture(tileTexture);
+		SDL_DestroyTexture(tailTexture);
+		SDL_DestroyTexture(headTexture);
+		SDL_DestroyTexture(bodyTexture);
+		SDL_DestroyTexture(appleTexture);
+		SDL_DestroyTexture(wallTexture);
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
 	}
-			/*
-			for (int i = 0; i < arenaX; i++)
-			{
-			for (int j = 0; j < arenaY; j++)
-			{
-			tileRect.x = j;
-			tileRect.y = i;
-
-
-			//TopWall
-			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
-			//Left wall
-			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Right wall
-			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Bottom Wall
-			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Snake positions
-			if (i == y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-
-			//Fruit positions
-			else if (i == fruitY && j == fruitX){ SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
-
-			else
-			{
-				//Printing the body of the snake
-				bool print = false;
-				for (int k = 0; k < nTail; k++)
-				{
-					if (tailX[k] == j && tailY[k] == i)
-					{
-						SDL_RenderCopy(renderer, bodyTexture, nullptr, &tileRect);
-						print = true;
-					}
-				}
-				//Printing blank spaces if there's no body to print
-				if (!print){ SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
-				}
-				}
-			}*/
+	catch (const char *msg) {
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", msg);
+	}
+	IMG_Quit();
+	SDL_Quit();
 	
-}
-//In this function we receive the keys the player presses using <conio.h> library. 
-//We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
-//respect the current, we use booleans.
-//We set the previous key pressed boolean to true in their case and set all the others to false apart from the opposite direction. 
-//In the Logic() function we will see why.
-
+}*/
 
 //We call here all functions, the order is very important!
 int main(int, char*[])
@@ -594,8 +561,8 @@ int main(int, char*[])
 	//You can play the game as long as the game isn't over
 	while (!menu && !dificulties && !gameOver) { //(play && !gameOver)
 		Draw();
-		//Input();
-		//Logic();
+		Input();
+		Logic();
 		//We use Sleep() function to control the speed of the game
 	/*	if (easy)
 			Sleep(120);
