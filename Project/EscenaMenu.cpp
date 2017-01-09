@@ -19,7 +19,7 @@ int mouseX, mouseY;
 SDL_Rect rect;
 HWND hwnd;
 bool menu = true;
-bool dificulties, play = false;
+bool dificulties, play, exitBool = false;
 bool gameOver;
 bool easy, medium, hard = false;
 bool prevUp, prevLeft, prevRight, prevDown = false;
@@ -636,7 +636,7 @@ void Sprites() {
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	while (((menu || dificulties) && !gameOver))
+	while (menu || dificulties)
 	{
 		Menu();
 	}
@@ -654,23 +654,23 @@ int main(int, char*[])
 		else if (hard)
 			Sleep(80);
 	}
-	SDL_DestroyTexture(playTexture);
-	SDL_DestroyTexture(exitTexture);
-	SDL_DestroyTexture(easyTexture);
-	SDL_DestroyTexture(mediumTexture);
-	SDL_DestroyTexture(hardTexture);
-	SDL_DestroyTexture(snakeTexture);
-	SDL_DestroyTexture(tileTexture);
-	SDL_DestroyTexture(tailTexture);
-	SDL_DestroyTexture(headTexture);
-	SDL_DestroyTexture(bodyTexture);
-	SDL_DestroyTexture(appleTexture);
-	SDL_DestroyTexture(wallTexture);
-	
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	IMG_Quit();
-	SDL_Quit();
-	
+		SDL_DestroyTexture(playTexture);
+		SDL_DestroyTexture(exitTexture);
+		SDL_DestroyTexture(easyTexture);
+		SDL_DestroyTexture(mediumTexture);
+		SDL_DestroyTexture(hardTexture);
+		SDL_DestroyTexture(snakeTexture);
+		SDL_DestroyTexture(tileTexture);
+		SDL_DestroyTexture(tailTexture);
+		SDL_DestroyTexture(headTexture);
+		SDL_DestroyTexture(bodyTexture);
+		SDL_DestroyTexture(appleTexture);
+		SDL_DestroyTexture(wallTexture);
+
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
+		IMG_Quit();
+		SDL_Quit();
+
 	return 0;
 }
