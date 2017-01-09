@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <string.h>
 #include <stdio.h>
+#include <cstdio>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -22,16 +24,16 @@ bool menu = true;
 bool dificulties, play, exitBool = false;
 bool gameOver;
 bool easy, medium, hard = false;
-bool prevUp, prevLeft, prevRight, prevDown = false;
-int arenaX = 150, arenaY = 100;
-int WIDTH = 900, HEIGHT = 600;
-int x, y, DIR,fruitX, fruitY, score;
+int arenaX = 200, arenaY = 120;
+int WIDTH = 1200, HEIGHT = 640;
+int x, y, dirAngle,fruitX, fruitY, score;
 int tailX[100], tailY[100], direction[100];
 int nTail;
 int lives = 3;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
+double baseTime;
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -58,13 +60,7 @@ SDL_Rect easyRect = { WIDTH / 2 - 200, HEIGHT/2-300 / 2,100,100 };
 SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
 SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
 
-SDL_Rect tileRect = { 0, 0, 50, 50 };
-
-SDL_Rect wallRect = { 0, 0, 50, 50 };
-SDL_Rect headRect = { 0, 0, 50, 50 };
-SDL_Rect bodyRect = { 0, 0, 50, 50 };
-SDL_Rect tailRect = { 0, 0, 50, 50 };
-SDL_Rect appleRect = { 0, 0, 50, 50 };
+SDL_Rect tileRect = { 0, 0, 10, 10 };
 
 //Menu Scene
 void Menu()
@@ -249,30 +245,39 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
-	tileRect = { 0, 0, 10, 10 };
-
+	baseTime = 3;
 	if (easy)
 	{
+		//Arena size
 		arenaX *= 5;
 		arenaY *= 5;
+		//Initial position of the snake in any map
+		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
+		//Time
+		baseTime *= 4;
 	}
 	else if (medium)
 	{
+		//Arena size
 		arenaX *= 2;
 		arenaY *= 2;
+		//Initial position of the snake in any map
+		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
+		//Time
+		baseTime *= 2;
 	}
 	else if (hard)
 	{
-
+		//Initial position of the snake in any map
+		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
 	}
 	//Initial direction of the snake is 0 = Stop for any diafficulty
 	dir = STOP;
-	//Initial position of the snake in any map
-	x = 50;
-	y = 50;
+
 	//Fruit initial spawn
-	fruitX = (1 + rand() % (arenaX/10)) * 10;
-	fruitY = (1 + rand() % (arenaY/10)) * 10;
+	//980 +10
+	fruitX = (1 + rand() % ((arenaX-20) / 10)) * 10;
+	fruitY = (1 + rand() % ((arenaY-20) / 10)) * 10;
 	//Score counter
 	score = 0;
 	//Score & lives print
@@ -283,15 +288,16 @@ void Setup()
 	rect.w = arenaX;
 	rect.h = arenaY;
 }
-
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
 {
 	nTail = 0;
 	dir = STOP;
-	prevUp = prevLeft = prevRight = prevDown = false; //This will allow the player to choose any direction again, even if it is the opposite of the last direction
-	x = 50;
-	y = 50;
+	dirAngle = STOP;
+	if (easy) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
+	else if (medium) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
+	else if (hard) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
+
 	lives--;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
@@ -309,7 +315,7 @@ void Draw()
 					tileRect.y = i;
 					//Tiles
 					//Snake
-					if (i==y && j == x){ SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, DIR, nullptr, SDL_FLIP_NONE); }
+					if (i==y && j == x){ SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE); }
 					//Apple
 					else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
 					else
@@ -320,7 +326,7 @@ void Draw()
 						{
 							if (tailX[k] == j && tailY[k] == i)
 							{
-								SDL_RenderCopyEx(renderer, bodyTexture, nullptr, &tileRect, DIR, nullptr, SDL_FLIP_NONE);
+								SDL_RenderCopyEx(renderer, bodyTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE);
 								print = true;
 							}
 						}
@@ -391,32 +397,23 @@ void Input()
 			/* Check the SDLKey values and move change the coords */
 			switch (event.key.keysym.sym) {
 			case SDLK_LEFT:
-				if (!prevLeft)
+				if (dir != RIGHT)
 					dir = LEFT;
-				prevUp = false;
-				prevLeft = true;
-				prevDown = false;
 				break;
 			case SDLK_RIGHT:
-				if (!prevRight)
+				if (dir != LEFT)
 					dir = RIGHT;
-				prevUp = false;
-				prevRight = true;
-				prevDown = false;
 				break;
 			case SDLK_UP:
-				if (!prevUp)
+				if (dir != DOWN)
 					dir = UP;
-				prevUp = true;
-				prevLeft = false;
-				prevRight = false;
 				break;
 			case SDLK_DOWN:
-				if (!prevDown)
+				if (dir != UP)
 					dir = DOWN;
-				prevLeft = false;
-				prevRight = false;
-				prevDown = true;
+				break;
+			case SDLK_ESCAPE:
+				gameOver = true;
 				break;
 			default:
 				break;
@@ -473,7 +470,7 @@ void Logic()
 	int prev2X, prev2Y, prev2Direction;
 	tailX[0] = x;
 	tailY[0] = y;
-	direction[0] = DIR;
+	direction[0] = dirAngle;
 
 	for (int i = 1; i < nTail; i++)
 	{
@@ -488,56 +485,23 @@ void Logic()
 		prevDirection = prev2Direction;
 	}
 	//The direction changes depending on the information received in the Input() function
-	//If the previous key of any direction has been pressed, it's boolean would be set as "true", meaning that if you press
-	//now the opposite key, the snake will continue with the same direction it had. 
-	//However, if the player presses any other key than the opposite, the previous boolean will be "false", adapting the direction to the new one.
-	//Example given: If you press LEFT (A), the snake goes left due to all booleans being initialised to "false" and the "prevLeft" boolean sets to "true".
-	//Now, if you press RIGHT (D), "prevLeft" continues true since it will only change to "false" if you press UP (W) or DOWN (S), meaning that in the following 
-	//switch the snake will continue as if you pressed LEFT or Nothing. 
-	//"Espero haver-me explicat bé: Arnau Ruiz. xD Recomano mirar l'Input() conjuntament.
 	switch (dir)
 	{
 	case LEFT:
-		if (!prevRight){
 			x -= 10;
-			DIR = 270;
-		}
-			
-		else if (prevRight){ 
-			x += 10; 
-			DIR = 90;
-		}
+			dirAngle = 270;
 		break;
 	case RIGHT:
-		if (!prevLeft){
 			x += 10;
-			DIR = 90;
-		}
-			
-		else if (prevLeft){
-			x -= 10;
-			DIR = 270;
-		}
+			dirAngle = 90;
 		break;
 	case UP:
-		if (!prevDown){
 			y -= 10;
-			DIR = 0;
-		}
-		else if (prevDown){
-			y += 10;
-			DIR = 180;
-		}
+			dirAngle = 0;
 		break;
 	case DOWN:
-		if (!prevUp) {
 			y += 10;
-			DIR = 180;
-		}
-		else if (prevUp) {
-			y -= 10;
-			DIR = 0;
-		}
+			dirAngle = 180;
 		break;
 	default:
 		break;
@@ -568,15 +532,16 @@ void Logic()
 	//When the head of the snake touches a fruit, it respawns to a random location of the arena, the player gains points and increases it's tail size.
 	if (x == fruitX && y == fruitY)	//if(x <= fruitX + tileRect.w && x >= fruitX && y <= fruitY + tileRect.h && y >= fruitY)	
 	{
-		score += 10;
-		fruitX = (1 + rand() % (arenaX / 10)) * 10;
-		fruitY = (1 + rand() % (arenaY / 10)) * 10;
+		score += 100;
+		fruitX = (1 + rand() % ((arenaX - 20) / 10)) * 10;
+		fruitY = (1 + rand() % ((arenaY - 20) / 10)) * 10;
 		cout << fruitX << " - " << fruitY << endl;
 		nTail++;
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
 	}
 }
+/*
 //Here there are the funtions that encript and desencript from the text
 std::string Encript(std::string myString) {
 	string::iterator it;
@@ -902,25 +867,25 @@ void Sprites() {
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	/*while (menu || dificulties)
-	{
-		Menu();
-	}
-	Setup();
-	//You can play the game as long as the game isn't over
-	while (!gameOver) { //(play && !gameOver)
-		Draw();
-		Input();
-		Logic();
-		//We use Sleep() function to control the speed of the game
-		if (easy)
-			Sleep(150);
-		else if (medium)
-			Sleep(120);
-		else if (hard)
-			Sleep(80);
-	}
-
+	while (menu || dificulties)
+		{
+			Menu();
+		}
+		Setup();
+		//You can play the game as long as the game isn't over
+		while (!gameOver) //(play && !gameOver)
+		{ 
+			Input();
+			Draw();
+			Logic();
+			//We use Sleep() function to control the speed of the game
+			if (easy)
+				Sleep(150);
+			else if (medium)
+				Sleep(120);
+			else if (hard)
+				Sleep(80);
+		}
 		SDL_DestroyTexture(playTexture);
 		SDL_DestroyTexture(exitTexture);
 		SDL_DestroyTexture(easyTexture);
@@ -938,7 +903,7 @@ int main(int, char*[])
 		SDL_DestroyWindow(window);
 		IMG_Quit();
 		SDL_Quit();
-		*/
+		
 
 	return 0;
 }
