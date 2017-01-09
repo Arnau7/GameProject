@@ -902,7 +902,7 @@ void Sprites() {
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	while (menu || dificulties)
+	/*while (menu || dificulties)
 	{
 		Menu();
 	}
@@ -938,6 +938,7 @@ int main(int, char*[])
 		SDL_DestroyWindow(window);
 		IMG_Quit();
 		SDL_Quit();
+		*/
 
 	return 0;
 }

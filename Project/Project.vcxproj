@@ -164,6 +164,7 @@
     <Xml Include="EscenaGame.xml">
       <SubType>Designer</SubType>
     </Xml>
+    <Xml Include="Ranking.xml" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rapidxml.hpp" />
