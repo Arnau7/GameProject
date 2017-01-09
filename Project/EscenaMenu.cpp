@@ -578,8 +578,7 @@ void Logic()
 	}
 }
 //Here there are the funtions that encript and desencript from the text
-void Encript() {
-	std::string myString = ("ARNAU");
+std::string Encript(std::string myString) {
 	string::iterator it;
 	std::string text = ("");
 	int loop = 0, num = 0;
@@ -719,8 +718,7 @@ void Encript() {
 	cout << text << "\n";
 
 }
-void Desencript() {
-	std::string myString = ("011110001010010111011011001010");
+std::string Desencript(std::string myString) {
 	std::string aux, text;
 	int num;
 	string::iterator it;
@@ -843,7 +841,7 @@ void Desencript() {
 			break;
 		}
 	}
-	cout << text << endl;
+	return text;
 }
 /*
 void Sprites() {
@@ -922,6 +920,7 @@ int main(int, char*[])
 		else if (hard)
 			Sleep(80);
 	}
+
 		SDL_DestroyTexture(playTexture);
 		SDL_DestroyTexture(exitTexture);
 		SDL_DestroyTexture(easyTexture);
