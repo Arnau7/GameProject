@@ -571,6 +571,7 @@ void Logic()
 		score += 10;
 		fruitX = (1 + rand() % (arenaX / 10)) * 10;
 		fruitY = (1 + rand() % (arenaY / 10)) * 10;
+		cout << fruitX << " - " << fruitY << endl;
 		nTail++;
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
