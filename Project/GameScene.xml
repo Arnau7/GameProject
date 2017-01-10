@@ -15,7 +15,7 @@ foodIncrease: y       2y        4y
 
   <easy category="easy">
     <Slots>Slots: 110*60 (slot size = 10)</Slots>
-    <Time> 60</Time>
+    <Time> 90</Time>
     <Speed> 140</Speed>
     <Food> 3</Food>
     <FoodIncrease> 1</FoodIncrease>
@@ -23,15 +23,15 @@ foodIncrease: y       2y        4y
 
   <medium category="medium">
     <Slots>Slots: 44*24 (slot size = 10)</Slots>
-    <Time> 30</Time>
+    <Time> 60</Time>
     <Speed> 120</Speed>
-    <Food> 2</Food>
+    <Food> 6</Food>
       <FoodIncrease> 2</FoodIncrease>
   </medium>
 
   <hard category="hard">
     <Slots>Slots: 22*12 (slot size = 10)</Slots>
-    <Time> 5</Time>
+    <Time> 30</Time>
     <Speed> 100</Speed>
     <Food> 9</Food>
     <FoodIncrease> 4</FoodIncrease>

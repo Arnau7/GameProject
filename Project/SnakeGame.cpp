@@ -239,12 +239,12 @@ void NextLevel()
 		start = timer;
 		fruitCounter = 1;
 		threshold += foodIncrease;
-		if (level < 10)
+		if (level < 8)
 		{
-			speed = speed - (level*1.5); //The speed of the game will change according to level
+			speed = speed - (level*1.75); //The speed of the game will change according to level
 			cout << "Speed increased" << endl;
 		}
-		else if (level >= 10)
+		else if (level >= 8)
 		{
 			cout << "Maximum speed!" << endl;
 		}
@@ -740,6 +740,7 @@ void Ranking(){
 	Persona player;
 	player.points = score;
 	
+	cout << "\nIntroduce your name:\n";
 	cin >> player.name; //demanar nom del jugador.
 
 	Persona Ranking[10];
@@ -783,7 +784,7 @@ void Ranking(){
 		file.close();
 	}
 	counter = 1;
-	cout << "The ranking is: ";
+	cout << "The ranking is: \n";
 	for (int i = 0; i < 10;i++) {
 		cout << counter << "- " << Ranking[i].name << " " << Ranking[i].points << " points." << endl;
 		counter++;
@@ -797,7 +798,7 @@ int main(int, char*[])
 	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
-	Mix_PlayMusic(music, -1); //-1 plays the music forever
+	//Mix_PlayMusic(music, -1); //-1 plays the music forever
 
 	//First Menu
 	while (menu || dificulties)
@@ -823,8 +824,12 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
-		//Ranking
-		Ranking();
+		while (gameOver)
+		{ 
+			//Ranking
+			Ranking();
+		}
+		
 		//Destroy
 		KillBill(); 
 		
