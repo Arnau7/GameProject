@@ -37,7 +37,7 @@ POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 string slotsS, timeLevelS, speedS, foodS, foodIncreaseS;
-int slots, timeLevel, speed, food, foodIncrease;
+int slots, timeLevel, speed, food, foodIncrease, threshold;
 int countdown = 0;
 double timer = 0;
 double start = 0;
@@ -186,6 +186,7 @@ void Setup()
 {
 	level = 1;
 	start = SDL_GetTicks();
+	threshold = 0;
 
 	if (easy)
 	{
@@ -227,7 +228,7 @@ void Setup()
 void NextLevel()
 {
 	//If the number of fruits eaten in one level are equal to the number of food available (considering the food increase as well), advance to next level
-	if(fruitCounter == food+foodIncrease) 
+	if(fruitCounter == 1+food+threshold) 
 	{ 
 		nTail = 0;
 		dir = STOP;
@@ -237,6 +238,7 @@ void NextLevel()
 		level++;
 		start = timer;
 		fruitCounter = 1;
+		threshold += foodIncrease;
 		if (level < 10)
 		{
 			speed = speed - (level*1.5); //The speed of the game will change according to level
