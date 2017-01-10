@@ -438,7 +438,7 @@ void KillBill()
 }
 
 //Here there are the funtions that encript and desencript from the text
-/*std::string Encript(std::string myString) {
+std::string Encript(std::string myString) {
 	string::iterator it;
 	std::string text = ("");
 	int loop = 0, num = 0;
@@ -705,11 +705,16 @@ std::string Desencript(std::string myString) {
 }
 
 void Ranking(){
-
+	
 	struct Persona {
 		std::string name;
 		string points;
 	};
+	Persona player;
+	player.points = score;
+
+	//demanar nom del jugador.
+
 	Persona Ranking[10];
 	std::string aux[20];
 	int counter = 0;
@@ -723,13 +728,28 @@ void Ranking(){
 		counter++;
 	}
 	counter = 0;
+	bool highscore=false;
+	int high;
 	for (int i = 0; i < 19; i += 2) {
 		Ranking[counter].name = Desencript(aux[i]);
 		Ranking[counter].points = Desencript(aux[i + 1]);
+		if (Ranking[counter].points < player.points) { highscore = true; high = counter; }
 		counter++;
 	}
+	counter = 9;
+	if (highscore == true) {
+		for (int i = 8; i > high;i--) {
+			Ranking[i - 1].name = Ranking[i].name;
+			Ranking[i - 1].points = Ranking[i].points;
+			counter--;
+		}
+		Ranking[counter].name = player.name;
+		Ranking[counter].points = player.points;
+	}
+
 	cout << Ranking[0].name << " - " << Ranking[0].points << endl;
 }
+
 /*
 void Sprites() {
 	try {
