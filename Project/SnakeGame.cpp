@@ -742,6 +742,7 @@ void Ranking(){
 		iss >> aux[counter];
 		counter++;
 	}
+	inputFile.close();
 	counter = 0;
 	bool highscore=false;
 	int high;
@@ -761,8 +762,16 @@ void Ranking(){
 		Ranking[counter].name = player.name;
 		Ranking[counter].points = player.points;
 	}
+	
+	ofstream file("Ranking.dat");
+	file.clear();
+	for (int i = 0; i < 10; i++) {
+		file << Encript(Ranking[i].name) << endl;
+		file << Encript(Ranking[i].points) << endl;
+	}
+	file.close();
 
-	cout << Ranking[0].name << " - " << Ranking[0].points << endl;
+	
 }
 
 //We call here all functions, the order is very important!
@@ -797,6 +806,8 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
+		//Ranking
+		Ranking();
 		//Destroy
 		KillBill(); 
 		
