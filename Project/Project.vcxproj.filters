@@ -23,9 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="Ranking.xml">
-      <Filter>Source Files</Filter>
-    </Xml>
     <Xml Include="GameScene.xml">
       <Filter>Source Files</Filter>
     </Xml>
@@ -43,5 +40,10 @@
     <ClInclude Include="rapidxml_print.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ranking.dat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

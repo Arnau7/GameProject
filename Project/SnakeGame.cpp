@@ -436,7 +436,7 @@ void KillBill()
 	IMG_Quit();
 	SDL_Quit();
 }
-/*
+
 //Here there are the funtions that encript and desencript from the text
 std::string Encript(std::string myString) {
 	string::iterator it;
@@ -702,6 +702,33 @@ std::string Desencript(std::string myString) {
 		}
 	}
 	return text;
+}
+
+void Ranking(){
+
+	struct Persona {
+		std::string name;
+		string points;
+	};
+	Persona Ranking[10];
+	std::string aux[20];
+	int counter = 0;
+	std::ifstream inputFile("Ranking.dat");
+	std::string line;
+	while (getline(inputFile, line)) {
+		if (!line.length() || line[0] == '#')
+			continue;
+		std::istringstream iss(line);
+		iss >> aux[counter];
+		counter++;
+	}
+	counter = 0;
+	for (int i = 0; i < 19; i += 2) {
+		Ranking[counter].name = Desencript(aux[i]);
+		Ranking[counter].points = Desencript(aux[i + 1]);
+		counter++;
+	}
+	cout << Ranking[0].name << " - " << Ranking[0].points << endl;
 }
 /*
 void Sprites() {
