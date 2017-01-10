@@ -802,6 +802,7 @@ void Ranking(){
 		counter++;
 
 	}
+	gameOver = false;
 }
 
 //We call here all functions, the order is very important!

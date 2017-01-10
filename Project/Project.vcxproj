@@ -158,7 +158,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SnakeGame.cpp" />
-    <ClCompile Include="Window%28omit%29.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="GameScene.xml">
