@@ -157,11 +157,11 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EscenaMenu.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
+    <ClCompile Include="SnakeGame.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="EscenaGame.xml">
+    <Xml Include="GameScene.xml">
       <SubType>Designer</SubType>
     </Xml>
     <Xml Include="Ranking.xml" />
