@@ -740,6 +740,7 @@ void Ranking(){
 	Persona player;
 	player.points = score;
 	
+	cout << "\nIntroduce your name:\n";
 	cin >> player.name; //demanar nom del jugador.
 
 	Persona Ranking[10];
@@ -783,7 +784,7 @@ void Ranking(){
 		file.close();
 	}
 	counter = 1;
-	cout << "The ranking is: ";
+	cout << "The ranking is: \n";
 	for (int i = 0; i < 10;i++) {
 		cout << counter << "- " << Ranking[i].name << " " << Ranking[i].points << " points." << endl;
 		counter++;
@@ -823,8 +824,12 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
-		//Ranking
-		Ranking();
+		while (gameOver)
+		{ 
+			//Ranking
+			Ranking();
+		}
+		
 		//Destroy
 		KillBill(); 
 		
