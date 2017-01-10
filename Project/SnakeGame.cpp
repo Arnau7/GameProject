@@ -239,12 +239,12 @@ void NextLevel()
 		start = timer;
 		fruitCounter = 1;
 		threshold += foodIncrease;
-		if (level < 10)
+		if (level < 8)
 		{
-			speed = speed - (level*1.5); //The speed of the game will change according to level
+			speed = speed - (level*1.75); //The speed of the game will change according to level
 			cout << "Speed increased" << endl;
 		}
-		else if (level >= 10)
+		else if (level >= 8)
 		{
 			cout << "Maximum speed!" << endl;
 		}
