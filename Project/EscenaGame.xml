@@ -2,29 +2,29 @@
 
 
 <gameDificulty>
-  
-  <dificulty category="easy">
+
+  <easy category="easy">
     <casillas>5r*5c</casillas>
     <tiempo>4t</tiempo>
     <speed>z</speed>
     <food>x</food>
     <foodIncrease>y</foodIncrease>
-  </dificulty>
-    
-  <dificulty category="normal">
+  </easy>
+
+  <normal category="normal">
     <casillas>2r*2c</casillas>
     <tiempo>2t</tiempo>
     <speed>2z</speed>
     <food>2x</food>
     <foodIncrease>2y</foodIncrease>
-  </dificulty>
+  </normal>
 
-  <dificulty category="hard">
+  <hard category="hard">
     <casillas>r*c</casillas>
     <tiempo>t</tiempo>
     <speed>3z</speed>
     <food>3x</food>
     <foodIncrease>4y</foodIncrease>
-  </dificulty>
-  
+  </hard>
+
 </gameDificulty>
