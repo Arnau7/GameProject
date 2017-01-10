@@ -455,7 +455,7 @@ void KillBill()
 	IMG_Quit();
 	SDL_Quit();
 }
-/*
+
 //Here there are the funtions that encript and desencript from the text
 std::string Encript(std::string myString) {
 	string::iterator it;
@@ -591,11 +591,7 @@ std::string Encript(std::string myString) {
 			}
 		}
 	}
-
-
-
-	cout << text << "\n";
-
+	return text;
 }
 std::string Desencript(std::string myString) {
 	std::string aux, text;
@@ -767,7 +763,7 @@ void Ranking(){
 	}
 
 	cout << Ranking[0].name << " - " << Ranking[0].points << endl;
-}*/
+}
 
 //We call here all functions, the order is very important!
 int main(int, char*[])
