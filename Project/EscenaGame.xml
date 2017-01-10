@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
-  Fer coments aquí :)
+Fer coments aquí :)
+
+r = 220; c = 120;
+              easy    medium    hard
+casillas:     5r*5c   2r*2c     r*c
+tiempo:       4t      2t        t
+speed:        z       2z        3z
+food:         x       2x        3x
+foodIncrease: y       2y        4y
 -->
 <gameDificulty>
 
   <easy category="easy">
-    <casillas>5r*5c</casillas>
-    <tiempo>4t</tiempo>
-    <speed>z</speed>
-    <food>x</food>
-    <foodIncrease>y</foodIncrease>
+    <Slots>Slots: 110*60 (slot size = 10)</Slots>
+    <Time> 32</Time>
+    <Speed> 140</Speed>
+    <Food> 3</Food>
+    <FoodIncrease> 1</FoodIncrease>
   </easy>
 
   <medium category="medium">
-    <casillas>2r*2c</casillas>
-    <tiempo>2t</tiempo>
-    <speed>2z</speed>
-    <food>2x</food>
-    <foodIncrease>2y</foodIncrease>
+    <Slots>Slots: 44*24 (slot size = 10)</Slots>
+    <Time> 16</Time>
+    <Speed> 120</Speed>
+    <Food> 6</Food>
+      <FoodIncrease> 2</FoodIncrease>
   </medium>
 
   <hard category="hard">
-    <casillas>r*c</casillas>
-    <tiempo>t</tiempo>
-    <speed>3z</speed>
-    <food>3x</food>
-    <foodIncrease>4y</foodIncrease>
+    <Slots>Slots: 22*12 (slot size = 10)</Slots>
+    <Time> 8</Time>
+    <Speed> 100</Speed>
+    <Food> 9</Food>
+    <FoodIncrease> 4</FoodIncrease>
   </hard>
 
 </gameDificulty>

@@ -9,6 +9,8 @@
 #include <conio.h>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 #include "rapidxml.hpp"
 #include "rapidxml_iterators.hpp"
 #include "rapidxml_utils.hpp"
@@ -18,22 +20,23 @@ using namespace std;
 using namespace rapidxml;
 
 int mouseX, mouseY;
-SDL_Rect rect;
 HWND hwnd;
 bool menu = true;
 bool dificulties, play, exitBool = false;
 bool gameOver;
 bool easy, medium, hard = false;
-int arenaX = 200, arenaY = 120;
+int arenaX = 220, arenaY = 120;
 int WIDTH = 1200, HEIGHT = 640;
-int x, y, dirAngle,fruitX, fruitY, score;
+SDL_Rect rect{ (WIDTH - arenaX) / 2, (HEIGHT - arenaY) / 2, arenaX, arenaY };
+int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
 int tailX[100], tailY[100], direction[100];
 int nTail;
 int lives = 3;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
-double baseTime;
+string slotsS, timeLevelS, speedS, foodS, foodIncreaseS;
+int slots, timeLevel, speed, food, foodIncrease;
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -62,12 +65,11 @@ SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
 
+Mix_Music* music;
+
 //Menu Scene
 void Menu()
-{
-	if (playTexture == NULL) cout << SDL_GetError();
-	if (exitTexture == NULL) cout << SDL_GetError();
-	
+{	
 	rapidxml::xml_document<> doc;
 	std::ifstream file("EscenaGame.xml");
 	std::stringstream buffer;
@@ -116,7 +118,12 @@ void Menu()
 
 						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
 						{
-							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							string name = pNodeI->name();  //cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							if (name == "Slots") { slotsS = pNodeI->value(); cout << slotsS << endl; }
+							if (name == "Time") { timeLevelS = pNodeI->value(); string::size_type sz;  timeLevel = stoi(timeLevelS, &sz); cout << "Time: " << timeLevel << endl; }
+							if (name == "Speed") { speedS = pNodeI->value(); string::size_type sz;  speed = stoi(speedS, &sz); cout << "Speed: " << speed << endl;}
+							if (name == "Food") { foodS = pNodeI->value();  string::size_type sz;  food = stoi(foodS, &sz); cout << "Food: " << food << endl;}
+							if (name == "FoodIncrease") { foodIncreaseS = pNodeI->value();  string::size_type sz;  foodIncrease = stoi(foodIncreaseS, &sz); cout << "Food increase: " << foodIncrease << endl;}
 						}
 					}
 					gameOver = false;
@@ -131,7 +138,12 @@ void Menu()
 
 						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
 						{
-							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							string name = pNodeI->name();  //cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							if (name == "Slots") { slotsS = pNodeI->value(); cout << slotsS << endl; }
+							if (name == "Time") { timeLevelS = pNodeI->value(); string::size_type sz;  timeLevel = stoi(timeLevelS, &sz); cout << "Time: " << timeLevel << endl; }
+							if (name == "Speed") { speedS = pNodeI->value(); string::size_type sz;  speed = stoi(speedS, &sz); cout << "Speed: " << speed << endl; }
+							if (name == "Food") { foodS = pNodeI->value();  string::size_type sz;  food = stoi(foodS, &sz); cout << "Food: " << food << endl; }
+							if (name == "FoodIncrease") { foodIncreaseS = pNodeI->value();  string::size_type sz;  foodIncrease = stoi(foodIncreaseS, &sz); cout << "Food increase: " << foodIncrease << endl; }
 						}
 					}
 					gameOver = false;
@@ -146,7 +158,12 @@ void Menu()
 
 						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
 						{
-							cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							string name = pNodeI->name();  //cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
+							if (name == "Slots") { slotsS = pNodeI->value(); cout << slotsS << endl; }
+							if (name == "Time") { timeLevelS = pNodeI->value(); string::size_type sz;  timeLevel = stoi(timeLevelS, &sz); cout << "Time: " << timeLevel << endl; }
+							if (name == "Speed") { speedS = pNodeI->value(); string::size_type sz;  speed = stoi(speedS, &sz); cout << "Speed: " << speed << endl; }
+							if (name == "Food") { foodS = pNodeI->value();  string::size_type sz;  food = stoi(foodS, &sz); cout << "Food: " << food << endl; }
+							if (name == "FoodIncrease") { foodIncreaseS = pNodeI->value();  string::size_type sz;  foodIncrease = stoi(foodIncreaseS, &sz); cout << "Food increase: " << foodIncrease << endl; }
 						}
 					}
 					gameOver = false;
@@ -158,94 +175,11 @@ void Menu()
 		
 	}
 	SDL_RenderPresent(renderer);
-
-	/*
-	//Welcome message
-	cout << "WELCOME TO SNAKE" << endl;
-	cout << endl << "Do you want to play?" << endl;
-	cout << endl << "PLAY!	Press < 1 >" << endl;
-	cout << endl << "EXIT	Press < 2 >" << endl << endl;
-	//Character Input, player's choice
-	int play;
-	cin >> play;
-	//Difficulty choice Menu
-	if (play == 1)
-	{
-		cout << endl;
-		//Inicializamos variable que introducirá el usuario
-		int dif;
-		//Imprimimos en consola texto
-		cout << "Please select your game dificulty:\n\n";
-		cout << "	Press < 1 > for EASY mode\n\n";
-		cout << "	Press < 2 > for NORMAL mode\n\n";
-		cout << "	Press < 3 > for HARD mode\n\n";
-
-		//Esperamos a que el usuario pulse una tecla
-		cin >> dif;
-		cout << "\n";
-
-		//Dependiendo de la tecla puslada se seleccionará un modo o dará error
-		switch (dif) {
-		case 1:
-			cout << "EASY mode selected\n";
-			if (rapidxml::xml_node<> *pNode = pRoot->first_node("easy"))
-			{
-
-				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
-				{
-					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
-				}
-			}
-			easy = true;
-			gameOver = false;
-			break;
-		case 2:
-			cout << "NORMAL mode selected\n";
-			if (rapidxml::xml_node<> *pNode = pRoot->first_node("medium"))
-			{
-				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
-				{
-					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
-				}
-			}
-			medium = true;
-			gameOver = false;
-			break;
-		case 3:
-			cout << "HARD mode selected\n";
-			if (rapidxml::xml_node<> *pNode = pRoot->first_node("hard"))
-			{
-				for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
-				{
-					cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
-				}
-			}
-			hard = true;
-			gameOver = false;
-			break;
-		default:
-			cout << "\nError: Invalid key\n\n";
-			gameOver = true;
-			break;
-		}
-	}
-	//Exit game, player's choice
-	else if (play == 2)
-	{
-		gameOver = true;
-	}
-	//Pressing an invalid key will exit the game too
-	else
-	{
-		cout << "\nError: Invalid key\n\n";
-		gameOver = true;
-	}*/
 }
 
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
-	baseTime = 3;
 	if (easy)
 	{
 		//Arena size
@@ -254,7 +188,6 @@ void Setup()
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
 		//Time
-		baseTime *= 4;
 	}
 	else if (medium)
 	{
@@ -264,7 +197,6 @@ void Setup()
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
 		//Time
-		baseTime *= 2;
 	}
 	else if (hard)
 	{
@@ -278,15 +210,13 @@ void Setup()
 	//980 +10
 	fruitX = (1 + rand() % ((arenaX-20) / 10)) * 10;
 	fruitY = (1 + rand() % ((arenaY-20) / 10)) * 10;
+	//Fruit counter score multiplier
+	fruitCounter = 1;
 	//Score counter
 	score = 0;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 
-	rect.x = WIDTH / 2;
-	rect.y = HEIGHT / 2;
-	rect.w = arenaX;
-	rect.h = arenaY;
 }
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
@@ -302,6 +232,10 @@ void ResetDeath()
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 }
+void PrintText()
+{
+	
+}
 //Game Loop
 void Draw()
 {
@@ -309,61 +243,17 @@ void Draw()
 	//X, Y loops
 	
 			//DRAW
-			for (int i = 0; i < arenaY; i += 10) {
-				for (int j = 0; j < arenaX; j += 10) {
-					tileRect.x = j;
-					tileRect.y = i;
-					//Tiles
-					//Snake
-					if (i==y && j == x){ SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE); }
-					//Apple
-					else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
-					else
-					{
-						//Printing the body of the snake
-						bool print = false;
-						for (int k = 0; k < nTail; k++)
-						{
-							if (tailX[k] == j && tailY[k] == i)
-							{
-								SDL_RenderCopyEx(renderer, bodyTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE);
-								print = true;
-							}
-						}
-						//Printing blank spaces if there's no body to print
-						if (!print) {
-							SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect);
-							//Printing walls again
-							if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-							else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-							else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-							else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-							//else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
-						}
-					}
-				}
-			}
-			SDL_RenderPresent(renderer);
-			//cout << x << " , " << y << endl;
-			/*
+	for (int i = 0; i < arenaY; i += 10) 
+	{
+		for (int j = 0; j < arenaX; j += 10) 
+		{
+			//Tiles
 			tileRect.x = j;
 			tileRect.y = i;
-
-
-			//TopWall
-			if(i==0){SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect);}
-			//Left wall
-			if (j == 0){ SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Right walls
-			if (j == arenaX - 50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Bottom Wall
-			if (i == arenaY-50) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
-			//Snake positions
-			if (i == y && j == x){ SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect); }
-				
-			//Fruit positions
-			else if (i == fruitY && j == fruitX){ SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
-				
+			//Snake
+			if (i == y && j == x) { SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE); }
+			//Apple
+			else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
 			else
 			{
 				//Printing the body of the snake
@@ -372,15 +262,24 @@ void Draw()
 				{
 					if (tailX[k] == j && tailY[k] == i)
 					{
-						SDL_RenderCopy(renderer, bodyTexture, nullptr, &tileRect);
+						SDL_RenderCopyEx(renderer, bodyTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE);
 						print = true;
 					}
 				}
 				//Printing blank spaces if there's no body to print
-				if (!print){ SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
-					
-			}*/
-	
+				if (!print) {
+					SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect);
+					//Printing walls
+					if (i == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (j == 0) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (j == arenaX - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					else if (i == arenaY - 10) { SDL_RenderCopy(renderer, wallTexture, nullptr, &tileRect); }
+					//else { SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect); }
+				}
+			}
+		}
+	}	
+	SDL_RenderPresent(renderer);
 }
 //In this function we receive the keys the player presses using <conio.h> library. 
 //We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
@@ -420,45 +319,6 @@ void Input()
 			}
 		}
 	}
-	
-	/*
-	if (_kbhit())
-	{
-		switch (_getch())
-		{
-		case 'w':
-			if (!prevUp)
-				dir = UP;
-			prevUp = true;
-			prevLeft = false;
-			prevRight = false;
-			break;
-		case 'a':
-			if (!prevLeft)
-				dir = LEFT;
-			prevUp = false;
-			prevLeft = true;
-			prevDown = false;
-			break;
-		case 'd':
-			if (!prevRight)
-				dir = RIGHT;
-			prevUp = false;
-			prevRight = true;
-			prevDown = false;
-			break;
-		case 's':
-			if (!prevDown)
-				dir = DOWN;
-			prevLeft = false;
-			prevRight = false;
-			prevDown = true;
-			break;
-		case 'x':
-			gameOver = true; //x to quit the game
-			break;
-		}
-	}*/
 }
 //In this function is where we calculate all positions according to what the player does in the game.
 void Logic()
@@ -532,14 +392,36 @@ void Logic()
 	//When the head of the snake touches a fruit, it respawns to a random location of the arena, the player gains points and increases it's tail size.
 	if (x == fruitX && y == fruitY)	//if(x <= fruitX + tileRect.w && x >= fruitX && y <= fruitY + tileRect.h && y >= fruitY)	
 	{
-		score += 100;
+		score += 100 * fruitCounter;
 		fruitX = (1 + rand() % ((arenaX - 20) / 10)) * 10;
 		fruitY = (1 + rand() % ((arenaY - 20) / 10)) * 10;
 		cout << fruitX << " - " << fruitY << endl;
+		fruitCounter++;
 		nTail++;
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
 	}
+}
+//This function destroys textures, renderer, window and quits SDL
+void KillBill()
+{
+	SDL_DestroyTexture(playTexture);
+	SDL_DestroyTexture(exitTexture);
+	SDL_DestroyTexture(easyTexture);
+	SDL_DestroyTexture(mediumTexture);
+	SDL_DestroyTexture(hardTexture);
+	SDL_DestroyTexture(snakeTexture);
+	SDL_DestroyTexture(tileTexture);
+	SDL_DestroyTexture(tailTexture);
+	SDL_DestroyTexture(headTexture);
+	SDL_DestroyTexture(bodyTexture);
+	SDL_DestroyTexture(appleTexture);
+	SDL_DestroyTexture(wallTexture); 
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	IMG_Quit();
+	SDL_Quit();
 }
 /*
 //Here there are the funtions that encript and desencript from the text
@@ -867,12 +749,20 @@ void Sprites() {
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
+	//Loading and playing the background music for the game
+	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
+	music = Mix_LoadMUS("../res/sfx/music.wav");
+	Mix_PlayMusic(music, -1); //-1 plays the music forever
+
+	//First Menu
 	while (menu || dificulties)
 		{
 			Menu();
 		}
+	//Setting up a few things according to game dificulty
 		Setup();
-		//You can play the game as long as the game isn't over
+
+		//Main game loop
 		while (!gameOver) //(play && !gameOver)
 		{ 
 			Input();
@@ -880,29 +770,14 @@ int main(int, char*[])
 			Logic();
 			//We use Sleep() function to control the speed of the game
 			if (easy)
-				Sleep(150);
+				Sleep(speed);
 			else if (medium)
-				Sleep(120);
+				Sleep(speed);
 			else if (hard)
-				Sleep(80);
+				Sleep(speed);
 		}
-		SDL_DestroyTexture(playTexture);
-		SDL_DestroyTexture(exitTexture);
-		SDL_DestroyTexture(easyTexture);
-		SDL_DestroyTexture(mediumTexture);
-		SDL_DestroyTexture(hardTexture);
-		SDL_DestroyTexture(snakeTexture);
-		SDL_DestroyTexture(tileTexture);
-		SDL_DestroyTexture(tailTexture);
-		SDL_DestroyTexture(headTexture);
-		SDL_DestroyTexture(bodyTexture);
-		SDL_DestroyTexture(appleTexture);
-		SDL_DestroyTexture(wallTexture);
-
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-		IMG_Quit();
-		SDL_Quit();
+		//Destroy
+		KillBill(); 
 		
 
 	return 0;
