@@ -37,6 +37,9 @@ enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 string slotsS, timeLevelS, speedS, foodS, foodIncreaseS;
 int slots, timeLevel, speed, food, foodIncrease;
+int countdown = 0;
+double timer = 0;
+double start = 0;
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -64,14 +67,16 @@ SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
 SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
-
+//Uint32 start;
 Mix_Music* music;
+
+
 
 //Menu Scene
 void Menu()
 {	
 	rapidxml::xml_document<> doc;
-	std::ifstream file("EscenaGame.xml");
+	std::ifstream file("GameScene.xml");
 	std::stringstream buffer;
 	buffer << file.rdbuf();
 	file.close();
@@ -228,6 +233,17 @@ void ResetDeath()
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 }
+void Timer()
+{
+	timer = SDL_GetTicks();
+	countdown = (timeLevel*1000 - (timer - start)) / 1000;
+	cout << countdown << endl;
+	if ((timer - start) > countdown)
+	{
+		start = timer;
+		ResetDeath();
+	}
+}
 void PrintText()
 {
 	
@@ -238,7 +254,7 @@ void Draw()
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
 	
-			//DRAW
+	//DRAW
 	for (int i = 0; i < arenaY; i += 10) 
 	{
 		for (int j = 0; j < arenaX; j += 10) 
@@ -247,7 +263,7 @@ void Draw()
 			tileRect.x = j;
 			tileRect.y = i;
 			//Snake
-			if (i == y && j == x) { SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE); }
+			if (i == y && j == x) { SDL_RenderCopyEx(renderer, headTexture, nullptr, &tileRect, dirAngle, nullptr, SDL_FLIP_NONE);}
 			//Apple
 			else if (i == fruitY && j == fruitX) { SDL_RenderCopy(renderer, appleTexture, nullptr, &tileRect); }
 			else
@@ -277,11 +293,9 @@ void Draw()
 	}	
 	SDL_RenderPresent(renderer);
 }
-//In this function we receive the keys the player presses using <conio.h> library. 
-//We change the snake direction according to the keys pressed and in order to avoid the snake from going to an opposite direction 
-//respect the current, we use booleans.
-//We set the previous key pressed boolean to true in their case and set all the others to false apart from the opposite direction. 
-//In the Logic() function we will see why.
+//In this function we receive the keys the player presses
+//We change the snake direction according to the keys pressed. In order to avoid the snake from going to an opposite direction 
+//the current direction will be used as a condition. The game can be ended at any time while playing by pressing the "Esc" key.
 void Input()
 {
 	SDL_Event event;
@@ -764,6 +778,7 @@ int main(int, char*[])
 			Input();
 			Draw();
 			Logic();
+			Timer();
 			//We use Sleep() function to control the speed of the game
 			if (easy)
 				Sleep(speed);
