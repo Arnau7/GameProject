@@ -26,7 +26,7 @@ bool dificulties, play, exitBool = false;
 bool gameOver;
 bool easy, medium, hard = false;
 int arenaX = 220, arenaY = 120;
-int WIDTH = 1200, HEIGHT = 640;
+const int WIDTH = 1200, HEIGHT = 640;
 SDL_Rect rect{ (WIDTH - arenaX) / 2, (HEIGHT - arenaY) / 2, arenaX, arenaY };
 int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
 int tailX[100], tailY[100], direction[100];
@@ -187,7 +187,6 @@ void Setup()
 		arenaY *= 5;
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
-		//Time
 	}
 	else if (medium)
 	{
@@ -196,7 +195,6 @@ void Setup()
 		arenaY *= 2;
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
-		//Time
 	}
 	else if (hard)
 	{
@@ -224,10 +222,8 @@ void ResetDeath()
 	nTail = 0;
 	dir = STOP;
 	dirAngle = STOP;
-	if (easy) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
-	else if (medium) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
-	else if (hard) { x = arenaX / 10 / 3 * 10, y = arenaY / 1.5; }
-
+	x = arenaX / 10 / 3 * 10;
+	y = arenaY / 1.5; 
 	lives--;
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
