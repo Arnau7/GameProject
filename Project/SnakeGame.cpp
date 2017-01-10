@@ -435,7 +435,7 @@ void KillBill()
 }
 
 //Here there are the funtions that encript and desencript from the text
-std::string Encript(std::string myString) {
+/*std::string Encript(std::string myString) {
 	string::iterator it;
 	std::string text = ("");
 	int loop = 0, num = 0;
