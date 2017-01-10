@@ -19,8 +19,9 @@
 using namespace std;
 using namespace rapidxml;
 
+//Global variables definition
+
 int mouseX, mouseY;
-HWND hwnd;
 bool menu = true;
 bool dificulties, play, exitBool = false;
 bool gameOver;
@@ -42,9 +43,10 @@ int countdown = 0;
 double timer = 0;
 double start = 0;
 
+//Window & Renderer create
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
+//Texture loads
 SDL_Texture *playTexture = IMG_LoadTexture(renderer, "../res/gfx/play.png");
 SDL_Texture *exitTexture = IMG_LoadTexture(renderer, "../res/gfx/exit.png");
 SDL_Texture *snakeTexture = IMG_LoadTexture(renderer, "../res/gfx/snake.png");
@@ -59,6 +61,7 @@ SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
 SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
 SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 
+//Rect definitions
 SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2-50,100,100 };
 SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2-50 +120,100,100 };
 
@@ -74,6 +77,7 @@ Mix_Music* music;
 //Menu Scene
 void Menu()
 {	
+	//Visual studio XML parsing
 	rapidxml::xml_document<> doc;
 	std::ifstream file("GameScene.xml");
 	std::stringstream buffer;
@@ -83,13 +87,15 @@ void Menu()
 	doc.parse<0>(&content[0]);
 	rapidxml::xml_node<> *pRoot = doc.first_node();
 
+	//Menu loop
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
-
+		//Buttons render
 		SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
 		SDL_RenderCopy(renderer, exitTexture, nullptr, &exitRect);
 		SDL_RenderCopy(renderer, snakeTexture, nullptr, &snakeRect);
 
+		//In this switch we check if the user clicks on any of the buttons displayed in the Menu
 		switch (event.type) {
 		case SDL_MOUSEBUTTONDOWN:
 			p.x = event.button.x;
@@ -184,10 +190,11 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
+	//Variables used later
 	level = 1;
 	start = SDL_GetTicks();
 	threshold = 0;
-
+	//Easy dificulty
 	if (easy)
 	{
 		//Arena size
@@ -196,6 +203,7 @@ void Setup()
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
 	}
+	//Medium dificulty
 	else if (medium)
 	{
 		//Arena size
@@ -204,6 +212,7 @@ void Setup()
 		//Initial position of the snake in any map
 		x = arenaX / 10 / 3 * 10, y = arenaY / 1.5;
 	}
+	//Hard dificulty
 	else if (hard)
 	{
 		//Initial position of the snake in any map
@@ -227,44 +236,47 @@ void Setup()
 //This function is in charge of changing to the following level
 void NextLevel()
 {
-	//If the number of fruits eaten in one level are equal to the number of food available (considering the food increase as well), advance to next level
+	//If the number of fruits eaten in one level are equal to the number of food available (considering the food increase too), advance to next level
 	if(fruitCounter == 1+food+threshold) 
 	{ 
+		//We set most of the variables as in the Setup()
 		nTail = 0;
 		dir = STOP;
 		dirAngle = STOP;
 		x = arenaX / 10 / 3 * 10;
 		y = arenaY / 1.5;
-		level++;
-		start = timer;
-		fruitCounter = 1;
-		threshold += foodIncrease;
+		level++; //Advance to next level counter
+		start = timer; //Reset time
+		fruitCounter = 1; //Reset fruit eaten in the level
+		threshold += foodIncrease; //Increases food required to advance to the following level
+		//Speed increase for each level up to lvl 7
 		if (level < 8)
 		{
 			speed = speed - (level*1.75); //The speed of the game will change according to level
 			cout << "Speed increased" << endl;
 		}
+		//From level 8 the speed remains the maximum we considered playable
 		else if (level >= 8)
 		{
 			cout << "Maximum speed!" << endl;
 		}
-		
-
 		cout << "Level: " << level << endl;
 	}
 }
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
 {
+	//The game ends if the player does not have enough lives to continue
 	if (lives <= 0) { gameOver = true; }
 	else 
 	{
+		//We set most of the variables as in the Setup()
 		nTail = 0;
 		dir = STOP;
 		dirAngle = STOP;
 		x = arenaX / 10 / 3 * 10;
 		y = arenaY / 1.5;
-		lives--;
+		lives--; //Player loses 1 live
 		//Score & lives print
 		cout << "Score: " << score << "	Lives: " << lives << endl;
 	}

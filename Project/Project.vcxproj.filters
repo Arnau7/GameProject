@@ -18,7 +18,7 @@
     <ClCompile Include="SnakeGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="Window%28omit%29.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
