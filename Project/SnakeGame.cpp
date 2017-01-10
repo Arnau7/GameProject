@@ -32,6 +32,7 @@ int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
 int tailX[100], tailY[100], direction[100];
 int nTail;
 int lives = 3;
+int level;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
@@ -183,7 +184,7 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
-
+	level = 1;
 	start = SDL_GetTicks();
 
 	if (easy)
@@ -222,17 +223,39 @@ void Setup()
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 
 }
+//This function is in charge of changing to the following level
+void NextLevel()
+{
+	//If the number of fruits eaten in one level are equal to the number of food available (considering the food increase as well), advance to next level
+	if(fruitCounter == food+foodIncrease) 
+	{ 
+		nTail = 0;
+		dir = STOP;
+		dirAngle = STOP;
+		x = arenaX / 10 / 3 * 10;
+		y = arenaY / 1.5;
+		level++;
+		start = timer;
+		fruitCounter = 1;
+
+		cout << "Level: " << level << endl;
+	}
+}
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
 {
-	nTail = 0;
-	dir = STOP;
-	dirAngle = STOP;
-	x = arenaX / 10 / 3 * 10;
-	y = arenaY / 1.5; 
-	lives--;
-	//Score & lives print
-	cout << "Score: " << score << "	Lives: " << lives << endl;
+	if (lives <= 0) { gameOver = true; }
+	else 
+	{
+		nTail = 0;
+		dir = STOP;
+		dirAngle = STOP;
+		x = arenaX / 10 / 3 * 10;
+		y = arenaY / 1.5;
+		lives--;
+		//Score & lives print
+		cout << "Score: " << score << "	Lives: " << lives << endl;
+	}
 }
 void Timer()
 {
@@ -243,13 +266,10 @@ void Timer()
 	cout << countdown << endl;
 	if (countdown <= 0)
 	{
+		cout << "You run out of time!" << endl;
 		start = timer;
 		ResetDeath();
 	}
-}
-void PrintText()
-{
-	
 }
 //Game Loop
 void Draw()
@@ -408,7 +428,6 @@ void Logic()
 		score += 100 * fruitCounter;
 		fruitX = (1 + rand() % ((arenaX - 20) / 10)) * 10;
 		fruitY = (1 + rand() % ((arenaY - 20) / 10)) * 10;
-		cout << fruitX << " - " << fruitY << endl;
 		fruitCounter++;
 		nTail++;
 		//Score & lives print
@@ -436,7 +455,7 @@ void KillBill()
 	IMG_Quit();
 	SDL_Quit();
 }
-
+/*
 //Here there are the funtions that encript and desencript from the text
 std::string Encript(std::string myString) {
 	string::iterator it;
@@ -712,8 +731,8 @@ void Ranking(){
 	};
 	Persona player;
 	player.points = score;
-
-	//demanar nom del jugador.
+	
+	cin >> player.name; //demanar nom del jugador.
 
 	Persona Ranking[10];
 	std::string aux[20];
@@ -748,62 +767,6 @@ void Ranking(){
 	}
 
 	cout << Ranking[0].name << " - " << Ranking[0].points << endl;
-}
-
-/*
-void Sprites() {
-	try {
-		SDL_Event e;
-		//INIT
-		if (SDL_Init(SDL_INIT_EVERYTHING) != 0) throw SDL_GetError();
-		const Uint8 imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
-		if (!(IMG_Init(imgFlags)&imgFlags)) throw IMG_GetError();
-		//WINDOW
-		 int WIDTH = 900, HEIGHT = 600;
-		SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
-		if (window == nullptr) throw SDL_GetError();
-
-		//RENDERER
-		SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-		//SPRITES
-		SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
-		SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
-		SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
-		SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
-		SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
-		SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
-		//if (tileTexture == nullptr) throw SDL_GetError();
-		SDL_Rect tileRect = { 0, 0, 50,50 };
-		SDL_Rect tileRect2 = { 50, 0, 50, 50 };
-		
-		//SDL_Rect playerRect = { (WIDTH >> 1) - 100, (HEIGHT >> 1) - 100, 200, 200 };
-
-		//GAME LOOP
-		for (bool isRunning = true; isRunning;) {
-			if (!SDL_PollEvent(&e)) if (e.type == SDL_QUIT) isRunning = false;
-			//DRAW
-			SDL_RenderCopy(renderer, headTexture, nullptr, &tileRect);
-			SDL_RenderCopy(renderer, tileTexture, nullptr, &tileRect2);
-			SDL_RenderPresent(renderer);
-		}
-			
-		//DESTROY
-		SDL_DestroyTexture(tileTexture);
-		SDL_DestroyTexture(tailTexture);
-		SDL_DestroyTexture(headTexture);
-		SDL_DestroyTexture(bodyTexture);
-		SDL_DestroyTexture(appleTexture);
-		SDL_DestroyTexture(wallTexture);
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(window);
-	}
-	catch (const char *msg) {
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "%s", msg);
-	}
-	IMG_Quit();
-	SDL_Quit();
-	
 }*/
 
 //We call here all functions, the order is very important!
@@ -828,6 +791,7 @@ int main(int, char*[])
 			Input();
 			Draw();
 			Logic();
+			NextLevel();
 			Timer();
 			//We use Sleep() function to control the speed of the game
 			if (easy)
