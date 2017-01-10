@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Fer coments aquí :)
+
+r = 220; c = 120;
+              easy    medium    hard
+casillas:     5r*5c   2r*2c     r*c
+tiempo:       4t      2t        t
+speed:        z       2z        3z
+food:         x       2x        3x
+foodIncrease: y       2y        4y
+-->
+<gameDificulty>
+
+  <easy category="easy">
+    <Slots>Slots: 110*60 (slot size = 10)</Slots>
+    <Time> 60</Time>
+    <Speed> 140</Speed>
+    <Food> 3</Food>
+    <FoodIncrease> 1</FoodIncrease>
+  </easy>
+
+  <medium category="medium">
+    <Slots>Slots: 44*24 (slot size = 10)</Slots>
+    <Time> 30</Time>
+    <Speed> 120</Speed>
+    <Food> 6</Food>
+      <FoodIncrease> 2</FoodIncrease>
+  </medium>
+
+  <hard category="hard">
+    <Slots>Slots: 22*12 (slot size = 10)</Slots>
+    <Time> 5</Time>
+    <Speed> 100</Speed>
+    <Food> 9</Food>
+    <FoodIncrease> 4</FoodIncrease>
+  </hard>
+
+</gameDificulty>

@@ -15,12 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EscenaMenu.cpp">
+    <ClCompile Include="SnakeGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="EscenaGame.xml">
+    <Xml Include="Ranking.xml">
+      <Filter>Source Files</Filter>
+    </Xml>
+    <Xml Include="GameScene.xml">
       <Filter>Source Files</Filter>
     </Xml>
   </ItemGroup>
