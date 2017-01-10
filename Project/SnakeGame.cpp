@@ -67,10 +67,8 @@ SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
 SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
-//Uint32 start;
+Uint32 initiate;
 Mix_Music* music;
-
-
 
 //Menu Scene
 void Menu()
@@ -185,6 +183,9 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
+
+	start = SDL_GetTicks();
+
 	if (easy)
 	{
 		//Arena size
@@ -235,10 +236,12 @@ void ResetDeath()
 }
 void Timer()
 {
+	//countdown = new DATE;
+	countdown = timeLevel;
 	timer = SDL_GetTicks();
-	countdown = (timeLevel*1000 - (timer - start)) / 1000;
+	countdown -= (timer - start)/1000;
 	cout << countdown << endl;
-	if ((timer - start) > countdown)
+	if (countdown <= 0)
 	{
 		start = timer;
 		ResetDeath();
