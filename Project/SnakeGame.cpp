@@ -55,6 +55,8 @@ SDL_Texture *hardTexture = IMG_LoadTexture(renderer, "../res/gfx/hard.png");
 SDL_Texture *snakeLiveTexture = IMG_LoadTexture(renderer, "../res/gfx/snakeLive.png");
 SDL_Texture *snakeLive2Texture = IMG_LoadTexture(renderer, "../res/gfx/snakeLive2.png");
 
+SDL_Texture *bgTexture = IMG_LoadTexture(renderer, "../res/gfx/Black.png");
+
 SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
 SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
 SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
@@ -66,6 +68,8 @@ SDL_Texture *timeBarTexture = IMG_LoadTexture(renderer, "../res/gfx/TimeBar.png"
 
 SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2-50,100,100 };
 SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2-50 +120,100,100 };
+
+SDL_Rect bgRect = {0,0,WIDTH,HEIGHT};
 
 SDL_Rect snakeRect = { WIDTH / 2 - 200, 20,400,100 };
 SDL_Rect easyRect = { WIDTH / 2 - 200, HEIGHT/2-300 / 2,100,100 };
@@ -849,7 +853,8 @@ int main(int, char*[])
 		}
 		//Setting up a few things according to game dificulty
 		Setup();
-
+		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
+		SDL_RenderPresent(renderer);
 		//Main game loop
 		while (!gameOver) //(play && !gameOver)
 		{
@@ -869,8 +874,8 @@ int main(int, char*[])
 		//intent de que torni a menu
 		menu = true;
 		game--;
-		//SDL_DestroyWindow(window);
-		//window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
+		SDL_RenderPresent(renderer);
 	}
 	
 	//Not Implemented 
