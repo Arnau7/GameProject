@@ -102,27 +102,23 @@ void Menu()
 	easy, medium, hard = false;
 
 	while (SDL_PollEvent(&event)) {
-
+		//Rendering Menu sprites
 		SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
 		SDL_RenderCopy(renderer, exitTexture, nullptr, &exitRect);
 		SDL_RenderCopy(renderer, snakeTexture, nullptr, &snakeRect);
 
 		switch (event.type) {
+		//Click check on mouse position
 		case SDL_MOUSEBUTTONDOWN:
 			p.x = event.button.x;
 			p.y = event.button.y;
 			if (menu)
-			{
+			{	//Play Button click check
 				if (p.x <= playRect.x + playRect.w && p.x >= playRect.x && p.y <= playRect.y + playRect.h && p.y >= playRect.y && event.button.button == SDL_BUTTON_LEFT)
 				{
 					dificulties = true;
 					cout << "Play" << endl;
 					menu = false;
-				}
-				if (p.x <= exitRect.x + exitRect.w && p.x >= exitRect.x && p.y <= exitRect.y + exitRect.h && p.y >= exitRect.y)
-				{
-					cout << "Exit" << endl;
-					gameOver = true;
 				}
 			}
 			if (dificulties)
@@ -130,13 +126,13 @@ void Menu()
 				SDL_RenderCopy(renderer, easyTexture, nullptr, &easyRect);
 				SDL_RenderCopy(renderer, mediumTexture, nullptr, &mediumRect);
 				SDL_RenderCopy(renderer, hardTexture, nullptr, &hardRect);
-
+				//Easy Button click check
 				if (p.x <= easyRect.x + easyRect.w && p.x >= easyRect.x && p.y <= easyRect.y + easyRect.h && p.y >= easyRect.y)
 				{
 					cout << "EASY mode selected\n";
+					//Copying values from XML file to .cpp variables
 					if (rapidxml::xml_node<> *pNode = pRoot->first_node("easy"))
 					{
-
 						for (rapidxml::xml_node<> *pNodeI = pNode->first_node(); pNodeI; pNodeI = pNodeI = pNodeI->next_sibling())
 						{
 							string name = pNodeI->name();  //cout << pNodeI->name() << ':' << pNodeI->value() << '\n';
@@ -151,9 +147,11 @@ void Menu()
 					easy = true;
 					dificulties = false;
 				}
+				//Medium Button click check
 				if (p.x <= mediumRect.x + mediumRect.w && p.x >= mediumRect.x && p.y <= mediumRect.y + mediumRect.h && p.y >= mediumRect.y)
-				{
+				{	
 					cout << "MEDIUM mode selected\n";
+					//Copying values from XML file to .cpp variables
 					if (rapidxml::xml_node<> *pNode = pRoot->first_node("medium"))
 					{
 
@@ -171,9 +169,11 @@ void Menu()
 					medium = true;
 					dificulties = false;
 				}
+				//Hard Button click check
 				if (p.x <= hardRect.x + hardRect.w && p.x >= hardRect.x && p.y <= hardRect.y + hardRect.h && p.y >= hardRect.y)
 				{
 					cout << "HARD mode selected\n";
+					//Copying values from XML file to .cpp variables
 					if (rapidxml::xml_node<> *pNode = pRoot->first_node("hard"))
 					{
 
@@ -190,6 +190,14 @@ void Menu()
 					gameOver = false;
 					hard = true;
 					dificulties = false;
+				}
+				//Exit Button click check
+				if (p.x <= exitRect.x + exitRect.w && p.x >= exitRect.x && p.y <= exitRect.y + exitRect.h && p.y >= exitRect.y)
+				{
+					cout << "Exit" << endl;
+					dificulties = false;
+					gameOver = true;
+					menu = false;
 				}
 			}
 		}
