@@ -52,10 +52,13 @@ SDL_Texture *easyTexture = IMG_LoadTexture(renderer, "../res/gfx/easy.png");
 SDL_Texture *mediumTexture = IMG_LoadTexture(renderer, "../res/gfx/medium.png");
 SDL_Texture *hardTexture = IMG_LoadTexture(renderer, "../res/gfx/hard.png");
 
+SDL_Texture *snakeLiveTexture = IMG_LoadTexture(renderer, "../res/gfx/snakeLive.png");
+SDL_Texture *snakeLive2Texture = IMG_LoadTexture(renderer, "../res/gfx/snakeLive2.png");
+
 SDL_Texture *tileTexture = IMG_LoadTexture(renderer, "../res/gfx/Tile.png");
 SDL_Texture *tailTexture = IMG_LoadTexture(renderer, "../res/gfx/Tail.png");
 SDL_Texture *headTexture = IMG_LoadTexture(renderer, "../res/gfx/Head.png");
-SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body.png");
+SDL_Texture *bodyTexture = IMG_LoadTexture(renderer, "../res/gfx/Body2.png");
 SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
 SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 
@@ -66,6 +69,10 @@ SDL_Rect snakeRect = { WIDTH / 2 - 200, 20,400,100 };
 SDL_Rect easyRect = { WIDTH / 2 - 200, HEIGHT/2-300 / 2,100,100 };
 SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
 SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
+
+SDL_Rect snakeLiveRect1;
+SDL_Rect snakeLiveRect2;
+SDL_Rect snakeLiveRect3;
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
 Uint32 initiate;
@@ -227,6 +234,9 @@ void Setup()
 	//Score & lives print
 	cout << "Score: " << score << "	Lives: " << lives << endl;
 
+	snakeLiveRect1 = { arenaX + 20, 20, 50, 50 };
+	snakeLiveRect2 = { arenaX + 20, 60, 50, 50 };
+	snakeLiveRect3 = { arenaX + 20, 100, 50, 50 };
 }
 //This function is in charge of changing to the following level
 void NextLevel()
@@ -292,7 +302,21 @@ void Draw()
 {
 	//Here we build the arena for the snake. The walls that limit the arena and the space available. We also print the food and the snake head and body positions
 	//X, Y loops
-	
+	if (lives == 3) { SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect1); SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect2); 
+	SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect3);
+	}
+	else if (lives == 2) {
+		SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect1); SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect2);
+		SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect3);
+	}
+	else if (lives == 1) {
+		SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect1); SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect2);
+		SDL_RenderCopy(renderer, snakeLiveTexture, nullptr, &snakeLiveRect3);
+	}
+	else if (lives == 0) {
+		SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect1); SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect2);
+		SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect3);
+	}
 	//DRAW
 	for (int i = 0; i < arenaY; i += 10) 
 	{
