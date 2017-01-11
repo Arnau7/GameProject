@@ -67,15 +67,15 @@ SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 
 SDL_Texture *timeBarTexture = IMG_LoadTexture(renderer, "../res/gfx/TimeBar.png");
 
-SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2-50,100,100 };
-SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2-50 +120,100,100 };
+SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2,100,100 };
+SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2 +120,100,100 };
 
 SDL_Rect bgRect = {0,0,WIDTH,HEIGHT};
 
 SDL_Rect snakeRect = { WIDTH / 2 - 200, 20,400,100 };
-SDL_Rect easyRect = { WIDTH / 2 - 200, HEIGHT/2-300 / 2,100,100 };
-SDL_Rect mediumRect = { WIDTH / 2 -50, HEIGHT/2- 300 / 2,100,100 };
-SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,100,100 };
+SDL_Rect easyRect = { WIDTH / 2 - 230, HEIGHT/2-300 / 2,125,125 };
+SDL_Rect mediumRect = { WIDTH / 2 -65, HEIGHT/2- 300 / 2,125,125 };
+SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,125,125 };
 
 SDL_Rect snakeLiveRect1;
 SDL_Rect snakeLiveRect2;
@@ -89,6 +89,11 @@ Mix_Music* music;
 //Menu Scene
 void Menu()
 {	
+	//Rendering Menu sprites
+	SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
+	SDL_RenderCopy(renderer, exitTexture, nullptr, &exitRect);
+	SDL_RenderCopy(renderer, snakeTexture, nullptr, &snakeRect);
+
 	rapidxml::xml_document<> doc;
 	std::ifstream file("GameScene.xml");
 	std::stringstream buffer;
@@ -103,11 +108,6 @@ void Menu()
 	easy, medium, hard = false;
 
 	while (SDL_PollEvent(&event)) {
-		//Rendering Menu sprites
-		SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
-		SDL_RenderCopy(renderer, exitTexture, nullptr, &exitRect);
-		SDL_RenderCopy(renderer, snakeTexture, nullptr, &snakeRect);
-
 		switch (event.type) {
 		//Click check on mouse position
 		case SDL_MOUSEBUTTONDOWN:
@@ -341,7 +341,7 @@ void Draw()
 	}
 
 	//Time bar according to arena size
-	timeBarRect = { arenaX + 20, arenaY-50, 40, countdown };
+	timeBarRect = { 10, arenaY+5, countdown, 30 };
 	SDL_RenderCopy(renderer, timeBarTexture, nullptr, &timeBarRect);
 
 	//DRAW
