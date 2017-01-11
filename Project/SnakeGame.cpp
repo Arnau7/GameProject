@@ -795,7 +795,7 @@ void Ranking() {
 	int counter = 0;
 	std::ifstream inputFile("ranking.dat");
 	std::string line;
-	while (getline(inputFile, line)) {
+	while (getline(inputFile, line)) {//gets the info from the file
 		if (!line.length() || line[0] == '#')
 			continue;
 		std::istringstream iss(line);
@@ -806,13 +806,13 @@ void Ranking() {
 	counter = 0;
 	bool highscore = false;
 	int high;
-	for (int i = 0; i < 19; i += 2) {
+	for (int i = 0; i < 19; i += 2) {//puts the info of the file in the ranking 
 		Ranking[counter].name = Desencript(aux[i]);
 		Ranking[counter].points = Desencript(aux[i + 1]);
-		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
+		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }//checks if there is a high score
 		counter++;
 	}
-	if (highscore == true) {
+	if (highscore == true) {//reorders the high score
 		for (int i = 8; i >= high; i--) {
 			Ranking[i + 1].name = Ranking[i].name;
 			Ranking[i + 1].points = Ranking[i].points;
@@ -830,7 +830,7 @@ void Ranking() {
 	}
 
 	counter = 1;
-	cout << "The ranking is: \n";
+	cout << "The ranking is: \n";//prints the ranking
 	for (int i = 0; i < 10; i++) {
 		cout << counter << "- " << Ranking[i].name << " " << Ranking[i].points << " points." << endl;
 		counter++;
