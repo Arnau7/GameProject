@@ -41,6 +41,7 @@ int slots, timeLevel, speed, food, foodIncrease, threshold;
 int countdown = 0;
 double timer;
 double start;
+int game;
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -191,14 +192,15 @@ void Menu()
 					hard = true;
 					dificulties = false;
 				}
-				//Exit Button click check
-				if (p.x <= exitRect.x + exitRect.w && p.x >= exitRect.x && p.y <= exitRect.y + exitRect.h && p.y >= exitRect.y)
-				{
-					cout << "Exit" << endl;
-					dificulties = false;
-					gameOver = true;
-					menu = false;
-				}
+			}
+			//Exit Button click check
+			if (p.x <= exitRect.x + exitRect.w && p.x >= exitRect.x && p.y <= exitRect.y + exitRect.h && p.y >= exitRect.y)
+			{
+				cout << "Exit" << endl;
+				dificulties = false;
+				gameOver = true;
+				menu = false;
+				game++;
 			}
 		}
 		
@@ -532,7 +534,7 @@ int main(int, char*[])
 	music = Mix_LoadMUS("../res/sfx/music.wav");
 	//Mix_PlayMusic(music, -1); //-1 plays the music forever
 
-	for (int game =0;game <1;game++){
+	for (game =0;game <1;game++){
 		//First Menu
 		while (menu || dificulties)
 		{
