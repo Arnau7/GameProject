@@ -22,9 +22,9 @@ using namespace rapidxml;
 int mouseX, mouseY;
 HWND hwnd;
 bool menu = true;
-bool dificulties, play, exitBool = false;
+bool dificulties, play, exitBool;
 bool gameOver;
-bool easy, medium, hard = false;
+bool easy, medium, hard;
 int arenaX = 220, arenaY = 120;
 const int WIDTH = 1200, HEIGHT = 640;
 SDL_Rect rect{ (WIDTH - arenaX) / 2, (HEIGHT - arenaY) / 2, arenaX, arenaY };
@@ -82,8 +82,11 @@ void Menu()
 	std::string content(buffer.str());
 	doc.parse<0>(&content[0]);
 	rapidxml::xml_node<> *pRoot = doc.first_node();
-
 	SDL_Event event;
+
+	dificulties, play, exitBool = false;
+	easy, medium, hard = false;
+
 	while (SDL_PollEvent(&event)) {
 
 		SDL_RenderCopy(renderer, playTexture, nullptr, &playRect);
@@ -799,15 +802,15 @@ int main(int, char*[])
 	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
-	Mix_PlayMusic(music, -1); //-1 plays the music forever
+	//Mix_PlayMusic(music, -1); //-1 plays the music forever
 
-
-	//First Menu
-	while (menu || dificulties)
+	for (int game =0;game <1;game++){
+		//First Menu
+		while (menu || dificulties)
 		{
 			Menu();
 		}
-	//Setting up a few things according to game dificulty
+		//Setting up a few things according to game dificulty
 		Setup();
 
 		//Main game loop
@@ -827,14 +830,23 @@ int main(int, char*[])
 				Sleep(speed);
 		}
 		//intent de que torni a menu
-		while (gameOver)
-		{ 
-			//Ranking
-			Ranking();
-		}
-		
+		menu = true;
+		game--;
+		//SDL_DestroyWindow(window);
+		//window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+	}
+	
+	//Not Implemented 
+	while (gameOver)
+	{ 
+		//Ranking
+		Ranking();
 		//Destroy
-		KillBill(); 
+		KillBill();
+	}
+		
+		
+		
 		
 
 	return 0;
