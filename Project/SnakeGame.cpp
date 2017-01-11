@@ -900,6 +900,10 @@ int main(int, char*[])
 				Sleep(speed);
 		}
 		//Back to menu
+		easy = false;
+		medium = false;
+		hard = false;
+		gameOver = false;
 		menu = true;
 		game--;
 		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
