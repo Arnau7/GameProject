@@ -32,7 +32,7 @@ int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
 int tailX[100], tailY[100], direction[100];
 int nTail;
 int lives;
-int level;
+int level, messageLevel;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
@@ -68,6 +68,8 @@ SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 SDL_Texture *timeBarTexture = IMG_LoadTexture(renderer, "../res/gfx/TimeBar.png");
 SDL_Texture *timeBarTexture2 = IMG_LoadTexture(renderer, "../res/gfx/TimeBar2.png");
 SDL_Texture *clockTexture = IMG_LoadTexture(renderer, "../res/gfx/clock.png");
+SDL_Texture *levelTexture = IMG_LoadTexture(renderer, "../res/gfx/level.png");
+SDL_Texture *levelTexture2 = IMG_LoadTexture(renderer, "../res/gfx/level2.png");
 
 SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2,100,100 };
 SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2 +120,100,100 };
@@ -82,7 +84,7 @@ SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,125,125 };
 SDL_Rect snakeLiveRect1;
 SDL_Rect snakeLiveRect2;
 SDL_Rect snakeLiveRect3;
-SDL_Rect timeBarRect, timeBarRect2, clockRect;
+SDL_Rect timeBarRect, timeBarRect2, clockRect, levelRect, levelRect2;
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
 Uint32 initiate;
@@ -275,6 +277,7 @@ void NextLevel()
 		start = timer;
 		fruitCounter = 1;
 		threshold += foodIncrease;
+		messageLevel = countdown;
 		if (level < 8)
 		{
 			speed = speed - (level*1.75); //The speed of the game will change according to level
@@ -284,10 +287,15 @@ void NextLevel()
 		{
 			cout << "Maximum speed!" << endl;
 		}
-		
-
 		cout << "Level: " << level << endl;
+		if (messageLevel < countdown + 3) {
+			levelRect = { arenaX / 2 -100, arenaY / 2 -50, 200, 100 };	//levelRect = { 60 + timeLevel, arenaY + 10, 100, 50 };
+			SDL_RenderCopy(renderer, levelTexture, nullptr, &levelRect);
+			SDL_RenderPresent(renderer);
+			Sleep(1000);
+			}
 	}
+
 }
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
@@ -891,7 +899,7 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
-		//intent de que torni a menu
+		//Back to menu
 		menu = true;
 		game--;
 		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);

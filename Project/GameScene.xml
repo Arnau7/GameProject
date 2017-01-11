@@ -25,7 +25,7 @@ foodIncrease: y       2y        4y
     <Slots>Slots: 44*24 (slot size = 10)</Slots>
     <Time> 60</Time>
     <Speed> 120</Speed>
-    <Food> 6</Food>
+    <Food> 1</Food>
       <FoodIncrease> 2</FoodIncrease>
   </medium>
 
