@@ -66,6 +66,8 @@ SDL_Texture *appleTexture = IMG_LoadTexture(renderer, "../res/gfx/Apple.png");
 SDL_Texture *wallTexture = IMG_LoadTexture(renderer, "../res/gfx/Wall.png");
 
 SDL_Texture *timeBarTexture = IMG_LoadTexture(renderer, "../res/gfx/TimeBar.png");
+SDL_Texture *timeBarTexture2 = IMG_LoadTexture(renderer, "../res/gfx/TimeBar2.png");
+SDL_Texture *clockTexture = IMG_LoadTexture(renderer, "../res/gfx/clock.png");
 
 SDL_Rect playRect = { WIDTH / 2-50,HEIGHT / 2,100,100 };
 SDL_Rect exitRect = { WIDTH/2-50,HEIGHT /2 +120,100,100 };
@@ -80,7 +82,7 @@ SDL_Rect hardRect = { WIDTH / 2 + 100, HEIGHT/2- 300 / 2,125,125 };
 SDL_Rect snakeLiveRect1;
 SDL_Rect snakeLiveRect2;
 SDL_Rect snakeLiveRect3;
-SDL_Rect timeBarRect;
+SDL_Rect timeBarRect, timeBarRect2, clockRect;
 
 SDL_Rect tileRect = { 0, 0, 10, 10 };
 Uint32 initiate;
@@ -340,9 +342,13 @@ void Draw()
 		SDL_RenderCopy(renderer, snakeLive2Texture, nullptr, &snakeLiveRect3);
 	}
 
-	//Time bar according to arena size
-	timeBarRect = { 10, arenaY+5, countdown, 30 };
-	SDL_RenderCopy(renderer, timeBarTexture, nullptr, &timeBarRect);
+	//Time bar position according to arena size
+	timeBarRect = { 60, arenaY+10, timeLevel, 20 };
+	timeBarRect2 = { 60, arenaY+10, countdown, 20 };
+	clockRect = { 10, arenaY + 5, 30, 30 };
+	SDL_RenderCopy(renderer, timeBarTexture2, nullptr, &timeBarRect);
+	SDL_RenderCopy(renderer, timeBarTexture, nullptr, &timeBarRect2);
+	SDL_RenderCopy(renderer, clockTexture, nullptr, &clockRect);
 
 	//DRAW
 	for (int i = 0; i < arenaY; i += 10) 
@@ -426,7 +432,7 @@ void Logic()
 	//Here we take care of the body/tail of the snake
 	int prevX = tailX[0];
 	int prevY = tailY[0];
-	int prevDirection = direction[0];
+	//int prevDirection = direction[0];
 	int prev2X, prev2Y, prev2Direction;
 	tailX[0] = x;
 	tailY[0] = y;
@@ -436,13 +442,13 @@ void Logic()
 	{
 		prev2X = tailX[i];
 		prev2Y = tailY[i];
-		prev2Direction = direction[i];
+		//prev2Direction = direction[i];
 		tailX[i] = prevX;
 		tailY[i] = prevY;
-		direction[i] = prevDirection;
+		//direction[i] = prevDirection;
 		prevX = prev2X;
 		prevY = prev2Y;
-		prevDirection = prev2Direction;
+		//prevDirection = prev2Direction;
 	}
 	//The direction changes depending on the information received in the Input() function
 	switch (dir)
@@ -516,6 +522,8 @@ void KillBill()
 	SDL_DestroyTexture(bodyTexture);
 	SDL_DestroyTexture(appleTexture);
 	SDL_DestroyTexture(wallTexture); 
+	SDL_DestroyTexture(timeBarTexture);
+	SDL_DestroyTexture(timeBarTexture2);
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
