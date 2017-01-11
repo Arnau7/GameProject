@@ -871,7 +871,7 @@ int main(int, char*[])
 	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
-	//Mix_PlayMusic(music, -1); //-1 plays the music forever
+	Mix_PlayMusic(music, -1); //-1 plays the music forever
 
 	for (game =0;game <1;game++){
 		//First Menu
