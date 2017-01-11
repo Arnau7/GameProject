@@ -25,7 +25,7 @@ bool menu = true;
 bool dificulties, play, exitBool;
 bool gameOver;
 bool easy, medium, hard;
-int arenaX = 220, arenaY = 120;
+int arenaX, arenaY;
 const int WIDTH = 1200, HEIGHT = 640;
 SDL_Rect rect{ (WIDTH - arenaX) / 2, (HEIGHT - arenaY) / 2, arenaX, arenaY };
 int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
@@ -194,6 +194,8 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
+	arenaX = 220;
+	arenaY = 120;
 	lives = 3;
 	level = 1;
 	start = SDL_GetTicks();
