@@ -31,7 +31,7 @@ SDL_Rect rect{ (WIDTH - arenaX) / 2, (HEIGHT - arenaY) / 2, arenaX, arenaY };
 int x, y, dirAngle, fruitX, fruitY, score, fruitCounter;
 int tailX[100], tailY[100], direction[100];
 int nTail;
-int lives = 3;
+int lives;
 int level;
 POINT p;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
@@ -39,8 +39,8 @@ eDirection dir;
 string slotsS, timeLevelS, speedS, foodS, foodIncreaseS;
 int slots, timeLevel, speed, food, foodIncrease, threshold;
 int countdown = 0;
-double timer = 0;
-double start = 0;
+double timer;
+double start;
 
 SDL_Window *window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
 SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -184,6 +184,7 @@ void Menu()
 //In this setup we will declare all variables according to the difficulty chosen by the player
 void Setup()
 {
+	lives = 3;
 	level = 1;
 	start = SDL_GetTicks();
 	threshold = 0;
@@ -798,7 +799,8 @@ int main(int, char*[])
 	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
-	//Mix_PlayMusic(music, -1); //-1 plays the music forever
+	Mix_PlayMusic(music, -1); //-1 plays the music forever
+
 
 	//First Menu
 	while (menu || dificulties)
@@ -824,6 +826,7 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
+		//intent de que torni a menu
 		while (gameOver)
 		{ 
 			//Ranking
