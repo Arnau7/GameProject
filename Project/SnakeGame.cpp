@@ -837,7 +837,50 @@ void Ranking() {
 
 	}
 }
+void Ranking2() {
+	struct Persona {
+		std::string name;
+		int points;
+	};
+	Persona player;
+	player.points = score;
 
+	bool highscore = false;
+	int high;
+
+	cout << "\nIntroduce your name:\n";
+	cin >> player.name; //demanar nom del jugador.
+
+	Persona Ranking[10];//ranking of the game
+	std::string aux[20];//auxiliar to read the file
+	int counter = 0;
+	std::ifstream inputFile("ranking.dat",ios::in | ios::binary);
+	
+	for (int i = 0; i < 10; i++) {
+		inputFile.read(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size);
+		inputFile.read(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
+		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
+		counter++;
+	}
+	inputFile.close();
+
+	if (highscore == true) {//reorders the high score
+		for (int i = 8; i >= high; i--) {
+			Ranking[i + 1].name = Ranking[i].name;
+			Ranking[i + 1].points = Ranking[i].points;
+		}
+		Ranking[high].name = player.name;
+		Ranking[high].points = player.points;
+
+		ofstream outputfile("Ranking.dat", ios::out | ios::binary);
+		outputfile.clear();
+		for (int i = 0; i < 10; i++) {
+			outputfile.write(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size);
+			outputfile.write(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
+		}
+		outputfile.close();
+	}
+}
 //This function destroys textures, renderer, window and quits SDL
 void KillBill()
 {
@@ -871,7 +914,7 @@ int main(int, char*[])
 	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
-	Mix_PlayMusic(music, -1); //-1 plays the music forever
+	//Mix_PlayMusic(music, -1); //-1 plays the music forever
 
 	for (game =0;game <1;game++){
 		//First Menu

@@ -38,9 +38,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Ranking.dat">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>
