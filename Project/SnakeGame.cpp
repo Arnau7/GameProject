@@ -515,7 +515,7 @@ void Logic()
 		cout << "Score: " << score << "	Lives: " << lives << endl;
 	}
 }
-
+/*
 std::string Encript(std::string myString) {
 	string::iterator it;
 	std::string text = ("");
@@ -836,7 +836,7 @@ void Ranking() {
 		counter++;
 
 	}
-}
+}*/
 void Ranking2() {
 	struct Persona {
 		std::string name;
@@ -880,11 +880,12 @@ void Ranking2() {
 		}
 		outputfile.close();
 	}
-	cout << "The ranking is: ";
+	cout << "The ranking is: \n";
 	for (int i = 0; i < 10; i++) {
-		cout << i << ": " << Ranking[i].name << " " << Ranking[i].name << endl;
+		cout << i << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
 	}
 }
+
 //This function destroys textures, renderer, window and quits SDL
 void KillBill()
 {
@@ -952,19 +953,12 @@ int main(int, char*[])
 		hard = false;
 		gameOver = false;
 		menu = true;
+		Ranking2();
 		game--;
 		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
 		SDL_RenderPresent(renderer);
 	}
 	
-	//Not Implemented 
-	while (gameOver)
-	{ 
-		//Ranking
-
-		//Destroy
-		KillBill();
-	}
 	/*int num=0;
 	ofstream outputfile("Ranking.dat", ios::out | ios::binary);
 	for (int i = 0; i < 20; i++) {
