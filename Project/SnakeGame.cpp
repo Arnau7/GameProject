@@ -857,7 +857,7 @@ void Ranking2() {
 	std::ifstream inputFile("ranking.dat",ios::in | ios::binary);
 	
 	for (int i = 0; i < 10; i++) {
-		inputFile.read(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size);
+		inputFile.read(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size());
 		inputFile.read(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
 		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
 		counter++;
@@ -875,10 +875,14 @@ void Ranking2() {
 		ofstream outputfile("Ranking.dat", ios::out | ios::binary);
 		outputfile.clear();
 		for (int i = 0; i < 10; i++) {
-			outputfile.write(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size);
+			outputfile.write(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size());
 			outputfile.write(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
 		}
 		outputfile.close();
+	}
+	cout << "The ranking is: ";
+	for (int i = 0; i < 10; i++) {
+		cout << i << ": " << Ranking[i].name << " " << Ranking[i].name << endl;
 	}
 }
 //This function destroys textures, renderer, window and quits SDL
@@ -961,8 +965,12 @@ int main(int, char*[])
 		//Destroy
 		KillBill();
 	}
-		
-		
+	/*int num=0;
+	ofstream outputfile("Ranking.dat", ios::out | ios::binary);
+	for (int i = 0; i < 20; i++) {
+		outputfile.write(reinterpret_cast<char *>(&num), sizeof num);
+	}
+	outputfile.close();*/
 		
 		
 
