@@ -42,5 +42,8 @@
     <None Include="Ranking.dat">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="test1.dat">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

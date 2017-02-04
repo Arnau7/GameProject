@@ -843,27 +843,29 @@ void Ranking2() {
 		int points;
 	};
 	Persona player;
-	player.points = score;
+	player.points = 25;
 
 	bool highscore = false;
 	int high;
 
-	cout << "\nIntroduce your name:\n";
+	cout<< "\nIntroduce your name:\n";
 	cin >> player.name; //demanar nom del jugador.
 
 	Persona Ranking[10];//ranking of the game
 	std::string aux[20];//auxiliar to read the file
 	int counter = 0;
-	std::ifstream inputFile("ranking.dat",ios::in | ios::binary);
-	
+	std::ifstream inputFile("ranking.dat", ios::binary);
+
+	// READ //
+
 	for (int i = 0; i < 10; i++) {
-		inputFile.read(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size());
-		inputFile.read(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
+		getline(inputFile, Ranking[i].name, '\0'); // Get player name (only if null ternimated in binary)
+		inputFile.read(reinterpret_cast<char*>(&Ranking[i].points), sizeof(Ranking[i].points)); // Read int bytes
 		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
 		counter++;
 	}
-	inputFile.close();
 
+	// HIGH SCORE //
 	if (highscore == true) {//reorders the high score
 		for (int i = 8; i >= high; i--) {
 			Ranking[i + 1].name = Ranking[i].name;
@@ -871,11 +873,12 @@ void Ranking2() {
 		}
 		Ranking[high].name = player.name;
 		Ranking[high].points = player.points;
-
-		ofstream outputfile("Ranking.dat", ios::out | ios::binary);
+		// WRITE //
+		ofstream outputfile("Ranking.dat", ios::binary);
 		outputfile.clear();
 		for (int i = 0; i < 10; i++) {
-			outputfile.write(reinterpret_cast<char *>(&Ranking[i].name), (Ranking[i].name).size());
+			outputfile.write(Ranking[i].name.c_str(), Ranking[i].name.size()); // Write string to binary file
+			outputfile.write("\0\n", sizeof(char)); // Add null end string for easier reading
 			outputfile.write(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
 		}
 		outputfile.close();
@@ -885,6 +888,7 @@ void Ranking2() {
 		cout << i << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
 	}
 }
+
 
 //This function destroys textures, renderer, window and quits SDL
 void KillBill()
@@ -916,7 +920,7 @@ void KillBill()
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	//Loading and playing the background music for the game
+	/*//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
 	//Mix_PlayMusic(music, -1); //-1 plays the music forever
@@ -965,8 +969,32 @@ int main(int, char*[])
 		outputfile.write(reinterpret_cast<char *>(&num), sizeof num);
 	}
 	outputfile.close();*/
-		
-		
+	
+	string myarray[3] = { "hey","im","Guillem" };
 
+	//cout << myarray[0] << " " << myarray[1] << " " << myarray[2] << endl;
+	string prova = "prova";
+	ofstream outputfile("test1.dat", ios::out | ios::binary);
+
+	outputfile.write(reinterpret_cast<char *>(&prova), prova.size());
+	cout << prova << endl;
+	/*for (int i = 0; i < 3; i++) {
+		outputfile.write(reinterpret_cast<char *>(&myarray[i]), (myarray[i]).size());
+	}*/
+	outputfile.close();
+
+	myarray[0] = "a"; myarray[1] = "b"; myarray[2] = "c";
+	prova = "proba";
+
+	ifstream inputfile("test1.dat", ios::in | ios::binary);
+
+	inputfile.read(reinterpret_cast<char *>(&prova), prova.size());
+	
+	/*for (int i = 0; i < 3; i++) {
+		inputfile.read(reinterpret_cast<char *>(&myarray[i]), (myarray[i]).size());
+		cout << myarray[i]<<endl;
+	}*/
+	inputfile.close();
+	cout << prova << endl;
 	return 0;
 }
