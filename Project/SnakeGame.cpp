@@ -887,6 +887,21 @@ void Ranking2() {
 	for (int i = 0; i < 10; i++) {
 		cout << i << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
 	}
+
+	// SI PETA PROVA AIXO AL MAIN //
+
+	/*struct auxiliar {
+		string aux1;
+		int aux2;
+	};
+	auxiliar Auxiliar = { "0",0 };
+	ofstream outputfile("Ranking.dat", ios::binary);
+	for (int i = 0; i < 10; i++) {
+		outputfile.write(Auxiliar.aux1.c_str(), Auxiliar.aux1.size()); // Write string to binary file
+		outputfile.write("\0\n", sizeof(char)); // Add null end string for easier reading
+		outputfile.write(reinterpret_cast<char *>(&Auxiliar.aux2), sizeof(Auxiliar.aux2));
+	}
+	outputfile.close();*/
 }
 
 
