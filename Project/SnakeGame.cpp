@@ -887,7 +887,7 @@ void Ranking2() {
 	}
 	cout << "The ranking is: \n";
 	for (int i = 0; i < 10; i++) {
-		cout << i << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
+		cout << i+1 << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
 	}
 
 	// SI PETA PROVA AIXO AL MAIN //
@@ -987,7 +987,7 @@ int main(int, char*[])
 	}
 	outputfile.close();*/
 	
-	string myarray[3] = { "hey","im","Guillem" };
+	string myarray[3] = { "hey","im","boosted" };
 
 	//cout << myarray[0] << " " << myarray[1] << " " << myarray[2] << endl;
 	string prova = "prova";
@@ -1001,7 +1001,7 @@ int main(int, char*[])
 	outputfile.close();
 
 	myarray[0] = "a"; myarray[1] = "b"; myarray[2] = "c";
-	prova = "proba";
+	prova = "prova2";
 
 	ifstream inputfile("test1.dat", ios::in | ios::binary);
 
