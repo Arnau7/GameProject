@@ -300,7 +300,9 @@ void NextLevel()
 //This function will take care of parameters changes upon deaths
 void ResetDeath()
 {
-	if (lives <= 0) { gameOver = true; }
+	if (lives <= 0) { 
+		gameOver = true; 
+	}
 	else 
 	{
 		nTail = 0;
@@ -843,7 +845,7 @@ void Ranking2() {
 		int points;
 	};
 	Persona player;
-	player.points = 25;
+	player.points = score;
 
 	bool highscore = false;
 	int high;
@@ -935,7 +937,7 @@ void KillBill()
 //We call here all functions, the order is very important!
 int main(int, char*[])
 {
-	/*//Loading and playing the background music for the game
+	//Loading and playing the background music for the game
 	Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096);
 	music = Mix_LoadMUS("../res/sfx/music.wav");
 	//Mix_PlayMusic(music, -1); //-1 plays the music forever
