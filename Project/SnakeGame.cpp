@@ -839,7 +839,7 @@ void Ranking() {
 
 	}
 }*/
-void Ranking2() {
+void RankingEasy() {
 	struct Persona {
 		std::string name;
 		int points;
@@ -856,7 +856,7 @@ void Ranking2() {
 	Persona Ranking[10];//ranking of the game
 	std::string aux[20];//auxiliar to read the file
 	int counter = 0;
-	std::ifstream inputFile("ranking.dat", ios::binary);
+	std::ifstream inputFile("RankingEasy.dat", ios::binary);
 
 	// READ //
 
@@ -876,7 +876,7 @@ void Ranking2() {
 		Ranking[high].name = player.name;
 		Ranking[high].points = player.points;
 		// WRITE //
-		ofstream outputfile("Ranking.dat", ios::binary);
+		ofstream outputfile("RankingEasy.dat", ios::binary);
 		outputfile.clear();
 		for (int i = 0; i < 10; i++) {
 			outputfile.write(Ranking[i].name.c_str(), Ranking[i].name.size()); // Write string to binary file
@@ -885,12 +885,12 @@ void Ranking2() {
 		}
 		outputfile.close();
 	}
-	cout << "The ranking is: \n";
+	cout << "The EASY ranking is: \n";
 	for (int i = 0; i < 10; i++) {
 		cout << i+1 << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
 	}
 
-	// SI PETA PROVA AIXO AL MAIN //
+	// SI PETA PROVAR AIXO AL MAIN //
 
 	/*struct auxiliar {
 		string aux1;
@@ -906,6 +906,124 @@ void Ranking2() {
 	outputfile.close();*/
 }
 
+void RankingMedium() {
+	struct Persona {
+		std::string name;
+		int points;
+	};
+	Persona player;
+	player.points = score;
+
+	bool highscore = false;
+	int high;
+
+	cout << "\nIntroduce your name:\n";
+	cin >> player.name; //demanar nom del jugador.
+
+	Persona Ranking[10];//ranking of the game
+	std::string aux[20];//auxiliar to read the file
+	int counter = 0;
+	std::ifstream inputFile("RankingMedium.dat", ios::binary);
+
+	// READ //
+
+	for (int i = 0; i < 10; i++) {
+		getline(inputFile, Ranking[i].name, '\0'); // Get player name (only if null ternimated in binary)
+		inputFile.read(reinterpret_cast<char*>(&Ranking[i].points), sizeof(Ranking[i].points)); // Read int bytes
+		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
+		counter++;
+	}
+
+	// HIGH SCORE //
+	if (highscore == true) {//reorders the high score
+		for (int i = 8; i >= high; i--) {
+			Ranking[i + 1].name = Ranking[i].name;
+			Ranking[i + 1].points = Ranking[i].points;
+		}
+		Ranking[high].name = player.name;
+		Ranking[high].points = player.points;
+		// WRITE //
+		ofstream outputfile("RankingMedium.dat", ios::binary);
+		outputfile.clear();
+		for (int i = 0; i < 10; i++) {
+			outputfile.write(Ranking[i].name.c_str(), Ranking[i].name.size()); // Write string to binary file
+			outputfile.write("\0\n", sizeof(char)); // Add null end string for easier reading
+			outputfile.write(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
+		}
+		outputfile.close();
+	}
+	cout << "The MEDIUM ranking is: \n";
+	for (int i = 0; i < 10; i++) {
+		cout << i + 1 << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
+	}
+
+	// SI PETA PROVAR AIXO AL MAIN //
+
+	/*struct auxiliar {
+	string aux1;
+	int aux2;
+	};
+	auxiliar Auxiliar = { "0",0 };
+	ofstream outputfile("Ranking.dat", ios::binary);
+	for (int i = 0; i < 10; i++) {
+	outputfile.write(Auxiliar.aux1.c_str(), Auxiliar.aux1.size()); // Write string to binary file
+	outputfile.write("\0\n", sizeof(char)); // Add null end string for easier reading
+	outputfile.write(reinterpret_cast<char *>(&Auxiliar.aux2), sizeof(Auxiliar.aux2));
+	}
+	outputfile.close();*/
+}
+
+void RankingHard() {
+	struct Persona {
+		std::string name;
+		int points;
+	};
+	Persona player;
+	player.points = score;
+
+	bool highscore = false;
+	int high;
+
+	cout << "\nIntroduce your name:\n";
+	cin >> player.name; //demanar nom del jugador.
+
+	Persona Ranking[10];//ranking of the game
+	std::string aux[20];//auxiliar to read the file
+	int counter = 0;
+	std::ifstream inputFile("RankingHard.dat", ios::binary);
+
+	// READ //
+
+	for (int i = 0; i < 10; i++) {
+		getline(inputFile, Ranking[i].name, '\0'); // Get player name (only if null ternimated in binary)
+		inputFile.read(reinterpret_cast<char*>(&Ranking[i].points), sizeof(Ranking[i].points)); // Read int bytes
+		if (Ranking[counter].points < player.points && highscore == false) { highscore = true; high = counter; cout << counter << endl; }
+		counter++;
+	}
+
+	// HIGH SCORE //
+	if (highscore == true) {//reorders the high score
+		for (int i = 8; i >= high; i--) {
+			Ranking[i + 1].name = Ranking[i].name;
+			Ranking[i + 1].points = Ranking[i].points;
+		}
+		Ranking[high].name = player.name;
+		Ranking[high].points = player.points;
+		// WRITE //
+		ofstream outputfile("RankingHard.dat", ios::binary);
+		outputfile.clear();
+		for (int i = 0; i < 10; i++) {
+			outputfile.write(Ranking[i].name.c_str(), Ranking[i].name.size()); // Write string to binary file
+			outputfile.write("\0\n", sizeof(char)); // Add null end string for easier reading
+			outputfile.write(reinterpret_cast<char *>(&Ranking[i].points), sizeof(Ranking[i].points));
+		}
+		outputfile.close();
+	}
+	cout << "The HARD ranking is: \n";
+	for (int i = 0; i < 10; i++) {
+		cout << i + 1 << ") " << Ranking[i].name << ": " << Ranking[i].points << endl;
+	}
+}
 
 //This function destroys textures, renderer, window and quits SDL
 void KillBill()
@@ -968,13 +1086,17 @@ int main(int, char*[])
 			else if (hard)
 				Sleep(speed);
 		}
+		//Ranking
+		RankingEasy();
+		RankingMedium();
+		RankingHard();
 		//Back to menu
 		easy = false;
 		medium = false;
 		hard = false;
 		gameOver = false;
 		menu = true;
-		Ranking2();
+		
 		game--;
 		SDL_RenderCopy(renderer, bgTexture, nullptr, &bgRect);
 		SDL_RenderPresent(renderer);

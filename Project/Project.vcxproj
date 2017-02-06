@@ -171,7 +171,7 @@
     <ClInclude Include="rapidxml_utils.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ranking.dat" />
+    <None Include="RankingEasy.dat" />
     <None Include="test1.dat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -39,10 +39,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ranking.dat">
+    <None Include="test1.dat">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="test1.dat">
+    <None Include="RankingEasy.dat">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
