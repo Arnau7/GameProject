@@ -1087,9 +1087,9 @@ int main(int, char*[])
 				Sleep(speed);
 		}
 		//Ranking
-		RankingEasy();
-		RankingMedium();
-		RankingHard();
+		if (easy) { RankingEasy(); }
+		else if (medium) { RankingMedium(); }
+		else if (hard) { RankingHard(); }
 		//Back to menu
 		easy = false;
 		medium = false;
@@ -1108,32 +1108,5 @@ int main(int, char*[])
 		outputfile.write(reinterpret_cast<char *>(&num), sizeof num);
 	}
 	outputfile.close();*/
-	
-	string myarray[3] = { "hey","im","boosted" };
-
-	//cout << myarray[0] << " " << myarray[1] << " " << myarray[2] << endl;
-	string prova = "prova";
-	ofstream outputfile("test1.dat", ios::out | ios::binary);
-
-	outputfile.write(reinterpret_cast<char *>(&prova), prova.size());
-	cout << prova << endl;
-	/*for (int i = 0; i < 3; i++) {
-		outputfile.write(reinterpret_cast<char *>(&myarray[i]), (myarray[i]).size());
-	}*/
-	outputfile.close();
-
-	myarray[0] = "a"; myarray[1] = "b"; myarray[2] = "c";
-	prova = "prova2";
-
-	ifstream inputfile("test1.dat", ios::in | ios::binary);
-
-	inputfile.read(reinterpret_cast<char *>(&prova), prova.size());
-	
-	/*for (int i = 0; i < 3; i++) {
-		inputfile.read(reinterpret_cast<char *>(&myarray[i]), (myarray[i]).size());
-		cout << myarray[i]<<endl;
-	}*/
-	inputfile.close();
-	cout << prova << endl;
 	return 0;
 }
