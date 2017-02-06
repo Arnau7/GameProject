@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="RankingEasy.dat" />
+    <None Include="RankingHard.dat" />
     <None Include="RankingMedium.dat" />
     <None Include="test1.dat" />
   </ItemGroup>
